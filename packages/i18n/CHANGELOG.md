@@ -1,5 +1,11 @@
 # @serverlessworkflow/i18n
 
+## 0.4.0
+
+### Minor Changes
+
+- [`e7a900a`](https://github.com/serverlessworkflow/editor/commit/e7a900a5a7a07f2ee5994723cc84e6ad0da25da6) Thanks [@fantonangeli](https://github.com/fantonangeli)! - inverted install steps in publish CI
+
 ## 0.3.0
 
 ### Minor Changes
