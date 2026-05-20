@@ -1,5 +1,11 @@
 # @serverlessworkflow/i18n
 
+## 0.2.0
+
+### Minor Changes
+
+- [`d738900`](https://github.com/serverlessworkflow/editor/commit/d73890034c3e5e305f5d258576f2a7e5d744f1ea) Thanks [@fantonangeli](https://github.com/fantonangeli)! - set syncpack to ignore root package version
+
 ## 0.1.0
 
 ### Minor Changes
