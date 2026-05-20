@@ -45,4 +45,5 @@ jobs:
             chore: version packages
 
             Signed-off-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          commitMode: github-api
           createGithubReleases: false
