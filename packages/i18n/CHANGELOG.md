@@ -1,5 +1,11 @@
 # @serverlessworkflow/i18n
 
+## 0.3.0
+
+### Minor Changes
+
+- [`3ce4b43`](https://github.com/serverlessworkflow/editor/commit/3ce4b4387d50315d654d78c50bfa525e8ab85760) Thanks [@fantonangeli](https://github.com/fantonangeli)! - Add Install Playwright browsers step to publish CI
+
 ## 0.2.0
 
 ### Minor Changes
