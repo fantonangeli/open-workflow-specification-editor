@@ -1,5 +1,14 @@
 # @serverlessworkflow/diagram-editor
 
+## 0.3.2
+
+### Patch Changes
+
+- [`61a0b3d`](https://github.com/serverlessworkflow/editor/commit/61a0b3df358bf743dd34bd602d1217691ac0cd4e) Thanks [@fantonangeli](https://github.com/fantonangeli)! - inverted 2 install steps
+
+- Updated dependencies [[`61a0b3d`](https://github.com/serverlessworkflow/editor/commit/61a0b3df358bf743dd34bd602d1217691ac0cd4e)]:
+  - @serverlessworkflow/i18n@0.3.2
+
 ## 0.3.1
 
 ### Patch Changes
