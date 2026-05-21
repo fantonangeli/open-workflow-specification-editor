@@ -1,5 +1,11 @@
 # @serverlessworkflow/i18n
 
+## 0.3.1
+
+### Patch Changes
+
+- [`e7adb5c`](https://github.com/serverlessworkflow/editor/commit/e7adb5cb18cce02b4a652f9c2fc7b64519444ee6) Thanks [@fantonangeli](https://github.com/fantonangeli)! - Fixed CVE-1234
+
 ## 0.3.0
 
 ### Minor Changes
