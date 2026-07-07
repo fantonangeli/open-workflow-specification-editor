@@ -36,7 +36,11 @@ To build and run the editor locally, you will need:
 - **Node.js**: `^22.13.0 || >=24.0.0` (see [nodejs.org](https://nodejs.org/))
 - **pnpm**: `10.31.0` (exact version, enforced by `packageManager` field)
 
-## Quick Start
+## Getting Started with the Diagram Editor
+
+See the [Getting Started guide](./packages/serverless-workflow-diagram-editor/README.md#getting-started) for installation and usage instructions for the Serverless Workflow Diagram Editor React component.
+
+## Building the Project
 
 ```bash
 # Clone the repository

@@ -18,6 +18,15 @@
 
 Official visual diagram editor for the [Open Workflow Specification](https://github.com/serverlessworkflow/specification). A vendor-neutral, embeddable React component with strict separation between core logic and platform APIs.
 
+## Getting Started
+
+### Requirements
+
+This package requires React 19 in the consuming application:
+```bash
+npm install react@^19 react-dom@^19
+```
+
 ## Installation
 
 ```bash
@@ -28,12 +37,47 @@ pnpm add @serverlessworkflow/diagram-editor
 yarn add @serverlessworkflow/diagram-editor
 ```
 
-Import the component and styles:
+### Usage
+
+Basic example:
 
 ```tsx
-import { DiagramEditor } from "@serverlessworkflow/diagram-editor";
-import "@serverlessworkflow/diagram-editor/styles.css";
+import { DiagramEditor } from '@serverlessworkflow/diagram-editor';
+import '@serverlessworkflow/diagram-editor/styles.css';
+
+const workflowContent = `
+document:
+  dsl: "1.0.3"
+  namespace: examples
+  name: call-http-shorthand-endpoint
+  version: "0.1.0"
+do:
+  - getPet:
+      call: http
+      with:
+        method: get
+        endpoint: https://petstore.swagger.io/v2/pet/{petId}
+`;
+
+function App() {
+
+  return (
+    <div style={{ height: '100vh' }}>
+      <DiagramEditor content={workflowContent} locale="en" isReadOnly={true} />
+    </div>
+  );
+}
 ```
+
+### Props
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `content` | `string` | Yes | - | Serverless Workflow specification in YAML or JSON format |
+| `isReadOnly` | `boolean` | Yes | - | Enable read-only mode to prevent editing |
+| `locale` | `string` | Yes | - | Language locale for the editor UI |
+| `colorMode` | `'light' \| 'dark' \| 'system'` | No | `'system'` | Color theme for the editor |
+
 
 ## Development
 
