@@ -19,6 +19,10 @@ import { ColorMode, ResolvedColorMode } from "../types/colorMode";
 
 const DARK_MEDIA_QUERY = "(prefers-color-scheme: dark)";
 
+function normalizeColorMode(colorMode: string): ColorMode {
+  return colorMode === "light" || colorMode === "dark" || colorMode === "system" ? colorMode : "system";
+}
+
 function getSystemColorMode(): ResolvedColorMode {
   if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
     return window.matchMedia(DARK_MEDIA_QUERY).matches ? "dark" : "light";
@@ -27,13 +31,15 @@ function getSystemColorMode(): ResolvedColorMode {
 }
 
 export function useResolvedColorMode(colorMode: ColorMode): ResolvedColorMode {
+  const normalized = normalizeColorMode(colorMode);
+
   const [resolvedColorMode, setResolvedColorMode] = useState<ResolvedColorMode>(
-    colorMode === "system" ? getSystemColorMode() : colorMode,
+    normalized === "system" ? getSystemColorMode() : normalized,
   );
 
   useEffect(() => {
-    if (colorMode !== "system") {
-      setResolvedColorMode(colorMode);
+    if (normalized !== "system") {
+      setResolvedColorMode(normalized);
       return;
     }
 
@@ -48,7 +54,7 @@ export function useResolvedColorMode(colorMode: ColorMode): ResolvedColorMode {
     return () => {
       mediaQuery.removeEventListener("change", handler);
     };
-  }, [colorMode]);
+  }, [normalized]);
 
   return resolvedColorMode;
 }
