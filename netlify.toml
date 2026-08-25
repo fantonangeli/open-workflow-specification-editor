@@ -39,6 +39,7 @@
 
     git fetch --no-tags --depth=2 origin "$FETCH_REF"
     BASE_REF="$(git rev-parse "$BASE_REV")"
+    echo "FETCH_REF=$FETCH_REF BASE_REV=$BASE_REV BASE_REF=$BASE_REF"
 
     npm i -g "pnpm@$PNPM_VERSION"
     ! pnpm -F "...[$BASE_REF]" -rc exec 'echo "$PNPM_PACKAGE_NAME"' | grep -Fqx "$PREVIEW_PACKAGE_NAME"
