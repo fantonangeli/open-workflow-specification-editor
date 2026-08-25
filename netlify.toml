@@ -28,7 +28,18 @@
   publish = "packages/open-workflow-diagram-editor/dist-storybook"
   ignore = """
     set -e -o pipefail
-    git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main
+
+    if [ -n "${REVIEW_ID:-}" ]; then
+      FETCH_REF="refs/pull/${REVIEW_ID}/merge"
+      BASE_REV="FETCH_HEAD^1"
+    else
+      FETCH_REF="main"
+      BASE_REV="FETCH_HEAD"
+    fi
+
+    git fetch --no-tags --depth=2 origin "$FETCH_REF"
+    BASE_REF="$(git rev-parse "$BASE_REV")"
+
     npm i -g "pnpm@$PNPM_VERSION"
-    ! pnpm -F '...[origin/main]' -rc exec 'echo "$PNPM_PACKAGE_NAME"' | grep -Fqx "$PREVIEW_PACKAGE_NAME"
+    ! pnpm -F "...[$BASE_REF]" -rc exec 'echo "$PNPM_PACKAGE_NAME"' | grep -Fqx "$PREVIEW_PACKAGE_NAME"
   """
