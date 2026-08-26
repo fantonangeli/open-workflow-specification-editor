@@ -30,16 +30,16 @@
     set -e -o pipefail
 
     if [ -n "${REVIEW_ID:-}" ]; then
+      # For PR previews, fetch GitHub's synthetic merge commit.
       FETCH_REF="refs/pull/${REVIEW_ID}/merge"
-      BASE_REV="FETCH_HEAD^1"
     else
-      FETCH_REF="main"
-      BASE_REV="FETCH_HEAD"
+      # For branch builds, fetch the branch being deployed.
+      FETCH_REF="$BRANCH"
     fi
 
     git fetch --no-tags --depth=2 origin "$FETCH_REF"
-    BASE_REF="$(git rev-parse "$BASE_REV")"
-    echo "FETCH_REF=$FETCH_REF BASE_REV=$BASE_REV BASE_REF=$BASE_REF"
+    BASE_REF="$(git rev-parse FETCH_HEAD^1)"
+    echo "FETCH_REF=$FETCH_REF BASE_REF=$BASE_REF"
 
     npm i -g "pnpm@$PNPM_VERSION"
     ! pnpm -F "...[$BASE_REF]" -rc exec 'echo "$PNPM_PACKAGE_NAME"' | grep -Fqx "$PREVIEW_PACKAGE_NAME"
