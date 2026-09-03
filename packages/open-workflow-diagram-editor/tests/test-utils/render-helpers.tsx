@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import type * as React from "react";
 import { render, type RenderOptions } from "@testing-library/react";
 import { I18nProvider } from "@openworkflowspec/i18n";
 import {
@@ -21,6 +22,7 @@ import {
   type DiagramEditorContextType,
 } from "../../src/store/DiagramEditorContext";
 import { SidebarProvider } from "../../src/components/ui/sidebar";
+import { ReactFlowProvider } from "@xyflow/react";
 import { en } from "../../src/i18n/locales/en";
 
 const noop = () => {};
@@ -42,12 +44,14 @@ export const createMockContextValue = (
   edges: [],
   taskReferences: new Set(),
   selectedNodeId: null,
+  isExporting: false,
 
   // --- dispatch defaults ---
   setLocale: noop,
   setEdges: noop,
   setNodes: noop,
   setSelectedNodeId: noop,
+  setIsExporting: noop,
   setContent: noop,
 
   // --- history defaults ---
@@ -74,11 +78,13 @@ export const renderWithProviders = (
   const mockContext = createMockContextValue(contextValue);
 
   return render(
-    <DiagramEditorContext.Provider value={mockContext}>
-      <I18nProvider locale={mockContext.locale} dictionaries={{ en }}>
-        <SidebarProvider defaultOpen={true}>{ui}</SidebarProvider>
-      </I18nProvider>
-    </DiagramEditorContext.Provider>,
+    <ReactFlowProvider>
+      <DiagramEditorContext.Provider value={mockContext}>
+        <I18nProvider locale={mockContext.locale} dictionaries={{ en }}>
+          <SidebarProvider defaultOpen={true}>{ui}</SidebarProvider>
+        </I18nProvider>
+      </DiagramEditorContext.Provider>
+    </ReactFlowProvider>,
     renderOptions,
   );
 };
