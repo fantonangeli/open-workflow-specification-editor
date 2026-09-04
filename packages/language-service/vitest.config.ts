@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import { type ClassValue, clsx } from "clsx";
+import { defineConfig } from "vitest/config";
 
-export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs);
-}
-
-export function sanitizeFilename(name: string | undefined): string {
-  return (name || "workflow")
-    .replace(/[/\\:*?"<>|]/g, "_")
-    .replace(/\s+/g, "_")
-    .trim()
-    .substring(0, 200);
-}
+export default defineConfig({
+  resolve: {
+    tsconfigPaths: true,
+  },
+  test: {
+    globals: true,
+    environment: "node",
+  },
+});

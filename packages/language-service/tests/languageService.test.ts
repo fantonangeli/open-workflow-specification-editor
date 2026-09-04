@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-import { type ClassValue, clsx } from "clsx";
+import { describe, it, expect } from "vitest";
+import { createLanguageService } from "../src/index";
 
-export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs);
-}
-
-export function sanitizeFilename(name: string | undefined): string {
-  return (name || "workflow")
-    .replace(/[/\\:*?"<>|]/g, "_")
-    .replace(/\s+/g, "_")
-    .trim()
-    .substring(0, 200);
-}
+describe("createLanguageService", () => {
+  it("re-exports createLanguageService from @volar/language-service", () => {
+    expect(typeof createLanguageService).toBe("function");
+  });
+});

@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-import { type ClassValue, clsx } from "clsx";
+import { defineConfig } from "vite";
 
-export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs);
-}
-
-export function sanitizeFilename(name: string | undefined): string {
-  return (name || "workflow")
-    .replace(/[/\\:*?"<>|]/g, "_")
-    .replace(/\s+/g, "_")
-    .trim()
-    .substring(0, 200);
-}
+export default defineConfig({
+  resolve: {
+    tsconfigPaths: true,
+  },
+  build: {
+    emptyOutDir: false,
+    sourcemap: true,
+    lib: {
+      entry: "src/index.ts",
+      fileName: (format) => (format === "es" ? "index.js" : `index.${format}.js`),
+      formats: ["es"],
+    },
+    rollupOptions: {
+      external: [/^@volar\//],
+    },
+  },
+});
