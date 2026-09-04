@@ -15,7 +15,10 @@
  */
 
 import * as React from "react";
-import * as monaco from "monaco-editor";
+import * as monaco from "monaco-editor/editor";
+import "monaco-editor/features/register.all";
+import "monaco-editor/languages/features/json/register";
+import "monaco-editor/languages/definitions/yaml/register";
 
 export type TextEditorLanguage = "json" | "yaml";
 

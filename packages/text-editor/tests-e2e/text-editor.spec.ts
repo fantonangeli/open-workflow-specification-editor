@@ -19,11 +19,9 @@ import { test, expect } from "@playwright/test";
 test("Monaco editor renders and is interactive", async ({ page }) => {
   await page.goto("/iframe.html?id=text-editor--json-editor");
 
-  // Monaco wraps its content in a div with class .monaco-editor
   const monacoContainer = page.locator(".monaco-editor").first();
   await expect(monacoContainer).toBeVisible();
 
-  // Monaco always renders an internal textarea for keyboard interaction
   const monacoTextarea = page.locator(".monaco-editor textarea").first();
   await expect(monacoTextarea).toBeAttached();
 });

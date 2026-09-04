@@ -18,11 +18,6 @@ import { render, screen } from "@testing-library/react";
 import { composeStories } from "@storybook/react-vite";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("monaco-editor", async () => {
-  const { default: monacoMock } = await import("../__mocks__/monaco-editor");
-  return monacoMock;
-});
-
 import * as stories from "../../stories/features/TextEditor.stories";
 import { mockEditorCreate } from "../__mocks__/monaco-editor";
 

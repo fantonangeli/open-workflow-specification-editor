@@ -16,6 +16,15 @@
 
 import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { afterEach } from "vitest";
+import { afterEach, vi } from "vitest";
+
+vi.mock("monaco-editor/editor", async () => {
+  const { default: monacoMock } = await import("./__mocks__/monaco-editor");
+  return monacoMock;
+});
+
+vi.mock("monaco-editor/features/register.all", () => ({}));
+vi.mock("monaco-editor/languages/features/json/register", () => ({}));
+vi.mock("monaco-editor/languages/definitions/yaml/register", () => ({}));
 
 afterEach(cleanup);
