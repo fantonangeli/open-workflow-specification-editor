@@ -16,12 +16,15 @@
 
 import { test, expect } from "@playwright/test";
 
-test("Monaco editor renders and is interactive", async ({ page }) => {
+test("Monaco editor is interactive", async ({ page }) => {
   await page.goto("/iframe.html?id=text-editor--json-editor");
 
   const monacoContainer = page.locator(".monaco-editor").first();
   await expect(monacoContainer).toBeVisible();
 
-  const monacoTextarea = page.locator(".monaco-editor textarea").first();
-  await expect(monacoTextarea).toBeAttached();
+  await monacoContainer.click();
+  await page.keyboard.press("Control+A");
+  await page.keyboard.type("Lorem ipsum");
+
+  await expect(monacoContainer).toContainText("Lorem ipsum");
 });
