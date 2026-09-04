@@ -15,7 +15,7 @@
  */
 
 import type { StoryObj } from "@storybook/react-vite";
-import type { TextEditor } from "./features/TextEditor";
+import { TextEditor } from "./features/TextEditor";
 
 type Story = StoryObj<typeof TextEditor>;
 
