@@ -23,7 +23,7 @@ test("Monaco editor is interactive", async ({ page }) => {
   await expect(monacoContainer).toBeVisible();
 
   await monacoContainer.click();
-  await page.keyboard.press("Control+A");
+  await page.keyboard.press("ControlOrMeta+A");
   await page.keyboard.type("Lorem ipsum");
 
   await expect(monacoContainer).toContainText("Lorem ipsum");
