@@ -24,6 +24,7 @@ import {
   mockEditorDispose,
   mockEditorSetValue,
   mockEditorUpdateOptions,
+  mockLanguageService,
   mockModel,
   mockSetModelLanguage,
   simulateEditorContentChange,
@@ -34,6 +35,7 @@ import { TextEditor, type TextEditorProps } from "../../src/TextEditor";
 const defaultProps: TextEditorProps = {
   content: "initial content",
   language: "json",
+  languageService: mockLanguageService,
 };
 
 const renderEditor = (props: Partial<TextEditorProps> = {}) => {

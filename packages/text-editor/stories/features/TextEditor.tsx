@@ -15,6 +15,12 @@
  */
 
 import { TextEditor as Component, TextEditorProps } from "../../src/TextEditor";
+import type { TextEditorLanguageService } from "../../src/language-service";
+
+// Stub used by stories that exercise only syntax highlighting and editor
+// behaviour, without a real language worker. These stories do not test
+// language-service features.
+const stubLanguageService: TextEditorLanguageService = { dispose() {} };
 
 /** Primary UI component for user interaction */
 export const TextEditor = ({ ...props }: TextEditorProps) => {
@@ -26,6 +32,7 @@ export const TextEditor = ({ ...props }: TextEditorProps) => {
         onContentChange={props.onContentChange}
         isReadOnly={props.isReadOnly}
         colorMode={props.colorMode}
+        languageService={props.languageService ?? stubLanguageService}
       />
     </div>
   );

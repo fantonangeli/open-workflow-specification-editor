@@ -14,3 +14,4 @@
  * limitations under the License.
  */
 export * from "./TextEditor";
+export * from "./language-service";

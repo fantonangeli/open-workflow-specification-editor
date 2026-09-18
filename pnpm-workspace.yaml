@@ -4,6 +4,7 @@ packages:
 catalog:
   "@base-ui/react": ^1.8.0
   "@volar/language-service": ^2.4.28
+  "@volar/monaco": ^2.4.28
   "volar-service-json": "0.0.71"
   "vscode-languageserver-textdocument": "^1.0.14"
   "@changesets/changelog-github": ^1.0.1

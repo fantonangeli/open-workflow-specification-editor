@@ -21,6 +21,7 @@ import "monaco-editor/languages/features/json/register";
 import "monaco-editor/languages/definitions/yaml/register";
 import { ColorMode } from "./types/colorMode";
 import { useResolvedColorMode } from "./hooks/useResolvedColorMode";
+import type { TextEditorLanguageService } from "./language-service";
 
 export type TextEditorLanguage = "json" | "yaml";
 
@@ -30,6 +31,14 @@ export type TextEditorProps = {
   onContentChange?: (content: string) => void;
   isReadOnly?: boolean;
   colorMode?: ColorMode;
+  /**
+   * Language service created with
+   * {@link createTextEditorLanguageService}.
+   *
+   * Provides Open Workflow language features: completions, diagnostics, and
+   * code lenses.
+   */
+  languageService: TextEditorLanguageService;
 };
 
 export const TextEditor = ({
@@ -38,6 +47,8 @@ export const TextEditor = ({
   onContentChange,
   isReadOnly = false,
   colorMode = "system",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  languageService: _languageService,
 }: TextEditorProps) => {
   const resolvedColorMode = useResolvedColorMode(colorMode);
   const containerRef = React.useRef<HTMLDivElement>(null);

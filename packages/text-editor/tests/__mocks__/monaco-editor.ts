@@ -81,3 +81,13 @@ export default {
     setModelLanguage: mockSetModelLanguage,
   },
 };
+
+// ---------------------------------------------------------------------------
+// TextEditorLanguageService stub for unit tests
+// ---------------------------------------------------------------------------
+
+export const mockLanguageServiceDispose = vi.fn();
+
+export const mockLanguageService = {
+  dispose: mockLanguageServiceDispose,
+};
