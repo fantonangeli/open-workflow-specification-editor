@@ -1,7 +1,7 @@
 {
   "name": "@openworkflowspec/text-editor",
   "version": "1.1.0",
-  "private": true,
+  "private": false,
   "description": "React Open Workflow text editor component backed by Monaco",
   "keywords": [],
   "homepage": "https://github.com/open-workflow-specification/editor",

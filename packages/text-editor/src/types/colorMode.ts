@@ -14,19 +14,5 @@
  * limitations under the License.
  */
 
-import { TextEditor as Component, TextEditorProps } from "../../src/TextEditor";
-
-/** Primary UI component for user interaction */
-export const TextEditor = ({ ...props }: TextEditorProps) => {
-  return (
-    <div style={{ height: "100vh" }}>
-      <Component
-        content={props.content}
-        language={props.language}
-        onContentChange={props.onContentChange}
-        isReadOnly={props.isReadOnly}
-        colorMode={props.colorMode}
-      />
-    </div>
-  );
-};
+export type ColorMode = "light" | "dark" | "system";
+export type ResolvedColorMode = "light" | "dark";

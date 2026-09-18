@@ -19,6 +19,8 @@ import * as monaco from "monaco-editor/editor";
 import "monaco-editor/features/register.all";
 import "monaco-editor/languages/features/json/register";
 import "monaco-editor/languages/definitions/yaml/register";
+import { ColorMode } from "./types/colorMode";
+import { useResolvedColorMode } from "./hooks/useResolvedColorMode";
 
 export type TextEditorLanguage = "json" | "yaml";
 
@@ -27,6 +29,7 @@ export type TextEditorProps = {
   language: TextEditorLanguage;
   onContentChange?: (content: string) => void;
   isReadOnly?: boolean;
+  colorMode?: ColorMode;
 };
 
 export const TextEditor = ({
@@ -34,7 +37,9 @@ export const TextEditor = ({
   language,
   onContentChange,
   isReadOnly = false,
+  colorMode = "system",
 }: TextEditorProps) => {
+  const resolvedColorMode = useResolvedColorMode(colorMode);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const isApplyingExternalContentRef = React.useRef(false);
@@ -50,6 +55,9 @@ export const TextEditor = ({
       readOnly: isReadOnly,
       automaticLayout: true,
       renderLineHighlight: "none",
+      ...(resolvedColorMode && {
+        theme: resolvedColorMode === "dark" ? "vs-dark" : "vs",
+      }),
     });
 
     editorRef.current = editor;
@@ -102,6 +110,13 @@ export const TextEditor = ({
   React.useEffect(() => {
     editorRef.current?.updateOptions({ readOnly: isReadOnly });
   }, [isReadOnly]);
+
+  React.useEffect(() => {
+    if (!editorRef.current) {
+      return;
+    }
+    monaco.editor.setTheme(resolvedColorMode === "dark" ? "vs-dark" : "vs");
+  }, [resolvedColorMode]);
 
   return (
     <div

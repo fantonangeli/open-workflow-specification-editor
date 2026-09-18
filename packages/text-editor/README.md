@@ -35,6 +35,7 @@ React text editor component for Open Workflow documents, based on [Monaco Editor
 | `language`        | `TextEditorLanguage`        | ✅       | —           | Document language: `json` or `yaml`.        |
 | `isReadOnly`      | `boolean`                   | —        | `false`     | Prevents editing when enabled.              |
 | `onContentChange` | `(content: string) => void` | —        | `undefined` | Called when the user modifies the document. |
+| `colorMode`       | `light, dark, system`       | —        | `system`    | Controls the editor theme.                  |
 
 ## Sizing
 

@@ -72,9 +72,12 @@ export const simulateEditorContentChange = (value: string) => {
   state.listener?.();
 };
 
+export const mockSetTheme = vi.fn();
+
 export default {
   editor: {
     create: mockEditorCreate,
+    setTheme: mockSetTheme,
     setModelLanguage: mockSetModelLanguage,
   },
 };
