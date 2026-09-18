@@ -36,7 +36,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@volar/language-service": "catalog:"
+    "@openworkflowspec/sdk": "catalog:",
+    "@volar/language-service": "catalog:",
+    "volar-service-json": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
@@ -45,6 +47,7 @@
     "rimraf": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vscode-languageserver-textdocument": "catalog:"
   }
 }

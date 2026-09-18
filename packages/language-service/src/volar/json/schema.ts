@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-import { defineConfig } from "vite";
+import type { LanguageServicePlugin } from "@volar/language-service";
+import { create } from "volar-service-json";
+import { workflowSchema } from "@openworkflowspec/sdk";
 
-export default defineConfig({
-  resolve: {
-    tsconfigPaths: true,
-  },
-  build: {
-    emptyOutDir: false,
-    sourcemap: true,
-    lib: {
-      entry: "src/index.ts",
-      fileName: (format) => (format === "es" ? "index.js" : `index.${format}.js`),
-      formats: ["es"],
+const DEFAULT_SCHEMA_URI = "urn:open-workflow-specification:workflow-schema";
+
+export function createJsonSchemaLanguageServicePlugin(): LanguageServicePlugin {
+  return create({
+    getLanguageSettings() {
+      return {
+        schemas: [
+          {
+            uri: workflowSchema.$id || DEFAULT_SCHEMA_URI,
+            fileMatch: ["*.json"],
+            schema: workflowSchema,
+          },
+        ],
+      };
     },
-    rollupOptions: {
-      external: [/^@volar\//, /^volar-service-/, /^@openworkflowspec\//],
-    },
-  },
-});
+  });
+}

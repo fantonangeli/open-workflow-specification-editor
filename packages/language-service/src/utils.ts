@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-import { defineConfig } from "vite";
-
-export default defineConfig({
-  resolve: {
-    tsconfigPaths: true,
-  },
-  build: {
-    emptyOutDir: false,
-    sourcemap: true,
-    lib: {
-      entry: "src/index.ts",
-      fileName: (format) => (format === "es" ? "index.js" : `index.${format}.js`),
-      formats: ["es"],
-    },
-    rollupOptions: {
-      external: [/^@volar\//, /^volar-service-/, /^@openworkflowspec\//],
-    },
-  },
-});
+/**
+ * Returns true if the document content is considered an empty Open Workflow —
+ * i.e. the trimmed content is an empty string.
+ * Any other content, including bare `{}`, returns false.
+ */
+export function isEmptyWorkflow(text: string): boolean {
+  return text.trim().length === 0;
+}

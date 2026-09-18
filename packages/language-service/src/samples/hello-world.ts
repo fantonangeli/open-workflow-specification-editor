@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import { defineConfig } from "vite";
-
-export default defineConfig({
-  resolve: {
-    tsconfigPaths: true,
+export const HELLO_WORLD_SAMPLE = `{
+  "document": {
+    "dsl": "1.0.3",
+    "namespace": "examples",
+    "name": "hello-world",
+    "version": "0.1.0"
   },
-  build: {
-    emptyOutDir: false,
-    sourcemap: true,
-    lib: {
-      entry: "src/index.ts",
-      fileName: (format) => (format === "es" ? "index.js" : `index.${format}.js`),
-      formats: ["es"],
-    },
-    rollupOptions: {
-      external: [/^@volar\//, /^volar-service-/, /^@openworkflowspec\//],
-    },
-  },
-});
+  "do": [
+    {
+      "greet": {
+        "call": "http",
+        "with": {
+          "method": "GET",
+          "endpoint": "https://httpbin.org/get"
+        }
+      }
+    }
+  ]
+}`;
