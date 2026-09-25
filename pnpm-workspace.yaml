@@ -38,7 +38,7 @@ catalog:
   jsdom: ^30.0.1
   lint-staged: ^17.5.1
   lucide-react: ^1.45.0
-  monaco-editor: 0.56.0
+  monaco-editor: 0.57.0
   oxfmt: ^0.67.0
   oxlint: ^1.82.0
   radix-ui: ^1.6.5
