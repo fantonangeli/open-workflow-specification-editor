@@ -20,22 +20,27 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useResolvedColorMode } from "../../src/hooks/useResolvedColorMode";
 
 import {
+  mockCreateModel,
   mockEditorCreate,
   mockEditorDispose,
   mockEditorSetValue,
   mockEditorUpdateOptions,
-  mockLanguageService,
   mockModel,
+  mockModelDispose,
   mockSetModelLanguage,
   simulateEditorContentChange,
   mockSetTheme,
+  mockMonacoWorkerDispose,
 } from "../__mocks__/monaco-editor";
 import { TextEditor, type TextEditorProps } from "../../src/TextEditor";
+
+const makeWorker = () => ({ terminate: vi.fn() }) as unknown as Worker;
+const createLanguageServiceWorker = vi.fn(makeWorker);
 
 const defaultProps: TextEditorProps = {
   content: "initial content",
   language: "json",
-  languageService: mockLanguageService,
+  createLanguageServiceWorker,
 };
 
 const renderEditor = (props: Partial<TextEditorProps> = {}) => {
@@ -72,22 +77,31 @@ describe("TextEditor", () => {
       expect(host).toHaveStyle({ width: "100%", height: "100%" });
     });
 
-    it("creates Monaco once with the initial props", () => {
+    it("creates the model then the editor with it", () => {
       const { container } = renderEditor({
         content: "hello yaml",
         language: "yaml",
         isReadOnly: true,
       });
 
+      expect(mockCreateModel).toHaveBeenCalledOnce();
+      expect(mockCreateModel).toHaveBeenCalledWith(
+        "hello yaml",
+        "yaml",
+        expect.objectContaining({ toString: expect.any(Function) }),
+      );
+
       expect(mockEditorCreate).toHaveBeenCalledOnce();
       expect(mockEditorCreate).toHaveBeenCalledWith(
         container.firstElementChild,
-        expect.objectContaining({
-          value: "hello yaml",
-          language: "yaml",
-          readOnly: true,
-        }),
+        expect.objectContaining({ model: mockModel, readOnly: true }),
       );
+    });
+
+    it("calls createLanguageServiceWorker once on mount", () => {
+      renderEditor();
+
+      expect(createLanguageServiceWorker).toHaveBeenCalledOnce();
     });
   });
 
@@ -98,7 +112,7 @@ describe("TextEditor", () => {
 
       rerenderEditor({ content: "updated content" });
 
-      expect(mockEditorSetValue).toHaveBeenCalledTimes(1);
+      expect(mockEditorSetValue).toHaveBeenCalledOnce();
       expect(mockEditorSetValue).toHaveBeenCalledWith("updated content");
       expect(onContentChange).not.toHaveBeenCalled();
     });
@@ -117,7 +131,7 @@ describe("TextEditor", () => {
 
       simulateEditorContentChange("edited content");
 
-      expect(onContentChange).toHaveBeenCalledTimes(1);
+      expect(onContentChange).toHaveBeenCalledOnce();
       expect(onContentChange).toHaveBeenCalledWith("edited content");
     });
   });
@@ -128,8 +142,8 @@ describe("TextEditor", () => {
 
       rerenderEditor({ language: "yaml" });
 
-      expect(mockEditorCreate).toHaveBeenCalledTimes(1);
-      expect(mockSetModelLanguage).toHaveBeenCalledTimes(1);
+      expect(mockEditorCreate).toHaveBeenCalledOnce();
+      expect(mockSetModelLanguage).toHaveBeenCalledOnce();
       expect(mockSetModelLanguage).toHaveBeenCalledWith(mockModel, "yaml");
     });
   });
@@ -150,8 +164,8 @@ describe("TextEditor", () => {
 
       rerenderEditor({ isReadOnly: true });
 
-      expect(mockEditorCreate).toHaveBeenCalledTimes(1);
-      expect(mockEditorUpdateOptions).toHaveBeenCalledTimes(1);
+      expect(mockEditorCreate).toHaveBeenCalledOnce();
+      expect(mockEditorUpdateOptions).toHaveBeenCalledOnce();
       expect(mockEditorUpdateOptions).toHaveBeenCalledWith({ readOnly: true });
     });
   });
@@ -165,28 +179,17 @@ describe("TextEditor", () => {
       rerenderEditor({ isReadOnly: true });
       rerenderEditor({ onContentChange: vi.fn() });
 
-      expect(mockEditorCreate).toHaveBeenCalledTimes(1);
+      expect(mockEditorCreate).toHaveBeenCalledOnce();
     });
 
-    it("disposes Monaco on unmount", () => {
+    it("disposes language service, editor and model on unmount", () => {
       const { unmount } = renderEditor();
 
       unmount();
 
-      expect(mockEditorDispose).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe("multiple instances", () => {
-    it("creates one Monaco editor per component instance", () => {
-      render(
-        <>
-          <TextEditor content="a" language="json" />
-          <TextEditor content="b" language="yaml" />
-        </>,
-      );
-
-      expect(mockEditorCreate).toHaveBeenCalledTimes(2);
+      expect(mockMonacoWorkerDispose).toHaveBeenCalledOnce();
+      expect(mockEditorDispose).toHaveBeenCalledOnce();
+      expect(mockModelDispose).toHaveBeenCalledOnce();
     });
   });
 
@@ -194,40 +197,35 @@ describe("TextEditor", () => {
     it("uses the light Monaco theme for light color mode", () => {
       renderEditor({ colorMode: "light" });
 
-      expect(mockSetTheme).toHaveBeenCalledTimes(1);
+      expect(mockSetTheme).toHaveBeenCalledOnce();
       expect(mockSetTheme).toHaveBeenCalledWith("vs");
     });
 
     it("uses the dark Monaco theme for dark color mode", () => {
       renderEditor({ colorMode: "dark" });
 
-      expect(mockSetTheme).toHaveBeenCalledTimes(1);
+      expect(mockSetTheme).toHaveBeenCalledOnce();
       expect(mockSetTheme).toHaveBeenCalledWith("vs-dark");
     });
 
     it("updates the Monaco theme when color mode changes", () => {
-      const { rerenderEditor } = renderEditor({
-        colorMode: "light",
-      });
+      const { rerenderEditor } = renderEditor({ colorMode: "light" });
 
       expect(mockSetTheme).toHaveBeenCalledWith("vs");
-
       mockSetTheme.mockClear();
 
       rerenderEditor({ colorMode: "dark" });
 
-      expect(mockSetTheme).toHaveBeenCalledTimes(1);
+      expect(mockSetTheme).toHaveBeenCalledOnce();
       expect(mockSetTheme).toHaveBeenCalledWith("vs-dark");
     });
 
     it("does not recreate Monaco when color mode changes", () => {
-      const { rerenderEditor } = renderEditor({
-        colorMode: "light",
-      });
+      const { rerenderEditor } = renderEditor({ colorMode: "light" });
 
       rerenderEditor({ colorMode: "dark" });
 
-      expect(mockEditorCreate).toHaveBeenCalledTimes(1);
+      expect(mockEditorCreate).toHaveBeenCalledOnce();
     });
   });
 

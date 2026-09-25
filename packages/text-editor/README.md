@@ -29,14 +29,14 @@ React text editor component for Open Workflow documents, based on [Monaco Editor
 
 ## Props
 
-| Prop              | Type                        | Required | Default     | Description                                                                   |
-| ----------------- | --------------------------- | -------- | ----------- | ----------------------------------------------------------------------------- |
-| `content`         | `string`                    | ✅       | —           | Current document content.                                                     |
-| `language`        | `TextEditorLanguage`        | ✅       | —           | Document language: `json` or `yaml`.                                          |
-| `languageService` | `TextEditorLanguageService` | ✅       | —           | Language service integration. Created with `createTextEditorLanguageService`. |
-| `isReadOnly`      | `boolean`                   | —        | `false`     | Prevents editing when enabled.                                                |
-| `onContentChange` | `(content: string) => void` | —        | `undefined` | Called when the user modifies the document.                                   |
-| `colorMode`       | `light, dark, system`       | —        | `system`    | Controls the editor theme.                                                    |
+| Prop                          | Type                        | Required | Default     | Description                                      |
+| ----------------------------- | --------------------------- | -------- | ----------- | ------------------------------------------------ |
+| `content`                     | `string`                    | ✅       | —           | Current document content.                        |
+| `language`                    | `TextEditorLanguage`        | ✅       | —           | Document language: `json` or `yaml`.             |
+| `createLanguageServiceWorker` | `() => Worker`              | ✅       | —           | Creates the Worker used by the language service. |
+| `isReadOnly`                  | `boolean`                   | —        | `false`     | Prevents editing when enabled.                   |
+| `onContentChange`             | `(content: string) => void` | —        | `undefined` | Called when the user modifies the document.      |
+| `colorMode`                   | `light, dark, system`       | —        | `system`    | Controls the editor theme.                       |
 
 ## Sizing
 
@@ -45,16 +45,9 @@ The editor fills `100%` of its container's width and height. The host must provi
 ## Usage
 
 ```tsx
-import { TextEditor, createTextEditorLanguageService } from "@openworkflowspec/text-editor";
+import { TextEditor } from "@openworkflowspec/text-editor";
+import LanguageServiceWorker from "@openworkflowspec/text-editor/worker?worker";
 import { useState } from "react";
-
-// Create once per application, outside of any component.
-const languageService = createTextEditorLanguageService({
-  createWorker: () =>
-    new Worker(new URL("./language.worker.ts", import.meta.url), {
-      type: "module",
-    }),
-});
 
 function App() {
   const [content, setContent] = useState('{"hello": "world"}');
@@ -64,8 +57,8 @@ function App() {
       <TextEditor
         content={content}
         language="json"
+        createLanguageServiceWorker={() => new LanguageServiceWorker()}
         onContentChange={setContent}
-        languageService={languageService}
       />
     </div>
   );
@@ -76,22 +69,19 @@ function App() {
 
 ### Lifecycle and ownership
 
-The host application owns the `TextEditorLanguageService` and is responsible for its disposal:
+Each mounted `TextEditor` creates and owns its language-service Worker and Monaco language-service integration.
 
-```ts
-// When language features are no longer needed
-languageService.dispose();
-```
+When the component is unmounted, the Text Editor disposes its language-service providers and Worker together with the Monaco editor and model.
 
-Calling `dispose()` terminates the underlying Worker and releases all registered Monaco providers and markers.
+The host application only provides `createLanguageServiceWorker`; it does not need to create, share, or dispose a separate language-service object.
 
-Individual `TextEditor` components never create or dispose the language service — their lifecycle is independent. Unmounting a `TextEditor` does not affect the language service.
+Multiple concurrently mounted Text Editor instances and shared-worker reuse are not currently supported.
 
 ### Supported languages
 
 | Language | Syntax highlighting | OWS completions | OWS diagnostics | OWS code lenses |
 | -------- | ------------------- | --------------- | --------------- | --------------- |
-| JSON     | ✅                  | ✅              | ✅              | ✅              |
+| JSON     | ✅                  | ✅              | 🚧 planned      | 🚧 planned      |
 | YAML     | ✅                  | 🚧 planned      | 🚧 planned      | 🚧 planned      |
 
 YAML language-service support is not yet available. Until then, YAML documents use Monaco's built-in syntax highlighting and language configuration only.

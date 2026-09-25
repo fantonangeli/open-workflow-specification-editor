@@ -14,23 +14,9 @@
  * limitations under the License.
  */
 
-import type { StorybookConfig } from "@storybook/react-vite";
+import { vi } from "vitest";
 
-const config: StorybookConfig = {
-  typescript: {
-    check: true,
-  },
-  core: {
-    disableTelemetry: true,
-  },
-  stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
-  addons: [
-    "@chromatic-com/storybook",
-    "@storybook/addon-vitest",
-    "@storybook/addon-a11y",
-    "@storybook/addon-docs",
-  ],
-  framework: "@storybook/react-vite",
-};
-
-export default config;
+export const mockProvidersDispose = vi.fn();
+export const mockRegisterProviders = vi.fn(() =>
+  Promise.resolve({ dispose: mockProvidersDispose }),
+);

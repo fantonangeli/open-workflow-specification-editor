@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { createJsonLanguageServicePlugins } from "@openworkflowspec/language-service";
+import { createSimpleWorkerLanguageService } from "@volar/monaco/worker";
+import { initialize } from "monaco-editor/editor/editor.worker.js";
+import { URI } from "vscode-uri";
 
-import type { StorybookConfig } from "@storybook/react-vite";
-
-const config: StorybookConfig = {
-  typescript: {
-    check: true,
-  },
-  core: {
-    disableTelemetry: true,
-  },
-  stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
-  addons: [
-    "@chromatic-com/storybook",
-    "@storybook/addon-vitest",
-    "@storybook/addon-a11y",
-    "@storybook/addon-docs",
-  ],
-  framework: "@storybook/react-vite",
-};
-
-export default config;
+initialize((ctx) =>
+  createSimpleWorkerLanguageService({
+    workerContext: ctx,
+    env: {
+      workspaceFolders: [URI.parse("file:///")],
+    },
+    languagePlugins: [
+      {
+        getLanguageId: () => "json",
+      },
+    ],
+    languageServicePlugins: createJsonLanguageServicePlugins(),
+  }),
+);

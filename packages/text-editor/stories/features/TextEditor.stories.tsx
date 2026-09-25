@@ -35,13 +35,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** JSON document with syntax highlighting. */
+/** JSON document. */
 export const JsonEditor: Story = createTextEditorStory({
   content: helloWorldJson,
   language: "json",
 });
 
-/** YAML document with syntax highlighting. */
+/** YAML document. */
 export const YamlEditor: Story = createTextEditorStory({
   content: helloWorldYaml,
   language: "yaml",
@@ -52,4 +52,10 @@ export const ReadOnly: Story = createTextEditorStory({
   content: helloWorldYaml,
   language: "yaml",
   isReadOnly: true,
+});
+
+/** Empty JSON document. */
+export const EmptyJson: Story = createTextEditorStory({
+  content: "",
+  language: "json",
 });

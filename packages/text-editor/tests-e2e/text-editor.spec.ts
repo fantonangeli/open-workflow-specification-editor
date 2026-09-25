@@ -14,17 +14,50 @@
  * limitations under the License.
  */
 
-import { test, expect } from "@playwright/test";
+import { test, expect, Locator } from "@playwright/test";
+import { getCompletion } from "./helpers";
 
-test("Monaco editor is interactive", async ({ page }) => {
-  await page.goto("/iframe.html?id=text-editor--json-editor");
+test.describe("TextEditor JSON", () => {
+  let monacoContainer: Locator;
 
-  const monacoContainer = page.locator(".monaco-editor").first();
-  await expect(monacoContainer).toBeVisible();
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/iframe.html?id=text-editor--empty-json");
 
-  await monacoContainer.click();
-  await page.keyboard.press("ControlOrMeta+A");
-  await page.keyboard.type("Lorem ipsum");
+    monacoContainer = page.locator(".monaco-editor").first();
+    await expect(monacoContainer).toBeVisible();
 
-  await expect(monacoContainer).toContainText("Lorem ipsum");
+    await monacoContainer.click();
+  });
+
+  test("Monaco editor is interactive", async ({ page }) => {
+    await page.keyboard.type("Lorem ipsum");
+
+    await expect(monacoContainer).toContainText("Lorem ipsum");
+  });
+
+  test("JSON schema completion adds the `do` property", async ({ page }) => {
+    await page.keyboard.type("{}");
+    await page.keyboard.press("ControlOrMeta+Home");
+    await page.keyboard.press("ArrowRight");
+    await page.keyboard.press("Escape");
+    await page.keyboard.press("ControlOrMeta+Space");
+
+    await expect(getCompletion(page, "document")).toBeVisible();
+
+    const doCompletion = getCompletion(page, "do");
+    await expect(doCompletion).toBeVisible();
+    await doCompletion.click();
+
+    await expect(monacoContainer).toContainText('{"do": []}');
+  });
+
+  test("Hello World completion inserts the sample workflow", async ({ page }) => {
+    await page.keyboard.press("ControlOrMeta+Space");
+
+    const helloWorldCompletion = getCompletion(page, "Insert Hello World workflow");
+    await expect(helloWorldCompletion).toBeVisible();
+    await helloWorldCompletion.click();
+
+    await expect(monacoContainer).toContainText('"name": "hello-world",');
+  });
 });

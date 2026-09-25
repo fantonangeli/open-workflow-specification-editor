@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-import { TextEditor as Component, TextEditorProps } from "../../src/TextEditor";
-import type { TextEditorLanguageService } from "../../src/language-service";
+import { TextEditor as Component, type TextEditorProps } from "../../src/TextEditor";
 
-// Stub used by stories that exercise only syntax highlighting and editor
-// behaviour, without a real language worker. These stories do not test
-// language-service features.
-const stubLanguageService: TextEditorLanguageService = { dispose() {} };
+const createLanguageServiceWorker = () =>
+  new Worker(new URL("../../src/worker/language.worker.ts", import.meta.url), { type: "module" });
 
 /** Primary UI component for user interaction */
 export const TextEditor = ({ ...props }: TextEditorProps) => {
   return (
     <div style={{ height: "100vh" }}>
-      <Component
-        content={props.content}
-        language={props.language}
-        onContentChange={props.onContentChange}
-        isReadOnly={props.isReadOnly}
-        colorMode={props.colorMode}
-        languageService={props.languageService ?? stubLanguageService}
-      />
+      <Component createLanguageServiceWorker={createLanguageServiceWorker} {...props} />
     </div>
   );
 };

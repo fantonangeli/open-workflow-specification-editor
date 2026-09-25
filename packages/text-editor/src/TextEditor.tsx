@@ -17,38 +17,43 @@
 import * as React from "react";
 import * as monaco from "monaco-editor/editor";
 import "monaco-editor/features/register.all";
-import "monaco-editor/languages/features/json/register";
+import { jsonDefaults } from "monaco-editor/languages/features/json/register";
 import "monaco-editor/languages/definitions/yaml/register";
-import { ColorMode } from "./types/colorMode";
 import { useResolvedColorMode } from "./hooks/useResolvedColorMode";
-import type { TextEditorLanguageService } from "./language-service";
+import { createTextEditorLanguageService } from "./language-service";
+import { ColorMode } from "./types/colorMode";
+
+jsonDefaults.setModeConfiguration({
+  tokens: true,
+  colors: false,
+  completionItems: false,
+  hovers: false,
+  documentSymbols: false,
+  documentFormattingEdits: false,
+  documentRangeFormattingEdits: false,
+  diagnostics: false,
+  foldingRanges: false,
+  selectionRanges: false,
+});
 
 export type TextEditorLanguage = "json" | "yaml";
 
 export type TextEditorProps = {
   content: string;
   language: TextEditorLanguage;
+  createLanguageServiceWorker: () => Worker;
   onContentChange?: (content: string) => void;
   isReadOnly?: boolean;
   colorMode?: ColorMode;
-  /**
-   * Language service created with
-   * {@link createTextEditorLanguageService}.
-   *
-   * Provides Open Workflow language features: completions, diagnostics, and
-   * code lenses.
-   */
-  languageService: TextEditorLanguageService;
 };
 
 export const TextEditor = ({
   content,
   language,
+  createLanguageServiceWorker,
   onContentChange,
   isReadOnly = false,
   colorMode = "system",
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  languageService: _languageService,
 }: TextEditorProps) => {
   const resolvedColorMode = useResolvedColorMode(colorMode);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -60,9 +65,14 @@ export const TextEditor = ({
       return;
     }
 
-    const editor = monaco.editor.create(containerRef.current, {
-      value: content,
+    const model = monaco.editor.createModel(
+      content,
       language,
+      monaco.Uri.parse("inmemory://openworkflow/workflow.json"),
+    );
+
+    const editor = monaco.editor.create(containerRef.current, {
+      model,
       readOnly: isReadOnly,
       automaticLayout: true,
       renderLineHighlight: "none",
@@ -71,14 +81,18 @@ export const TextEditor = ({
       }),
     });
 
+    const languageService = createTextEditorLanguageService(model, createLanguageServiceWorker);
+
     editorRef.current = editor;
 
     return () => {
+      languageService.dispose();
       editor.dispose();
+      model.dispose();
       editorRef.current = null;
     };
 
-    // Monaco must be created only once.
+    // Monaco and its language-service worker must be created only once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -126,6 +140,7 @@ export const TextEditor = ({
     if (!editorRef.current) {
       return;
     }
+
     monaco.editor.setTheme(resolvedColorMode === "dark" ? "vs-dark" : "vs");
   }, [resolvedColorMode]);
 

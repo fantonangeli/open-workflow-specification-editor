@@ -13,24 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// Monaco 0.56.0 exposes this worker module at runtime but does not provide typeScript declarations for it.
+declare module "monaco-editor/editor/editor.worker.js" {
+  type WorkerContext = Parameters<
+    typeof import("@volar/monaco/worker").createSimpleWorkerLanguageService
+  >[0]["workerContext"];
 
-import type { StorybookConfig } from "@storybook/react-vite";
-
-const config: StorybookConfig = {
-  typescript: {
-    check: true,
-  },
-  core: {
-    disableTelemetry: true,
-  },
-  stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
-  addons: [
-    "@chromatic-com/storybook",
-    "@storybook/addon-vitest",
-    "@storybook/addon-a11y",
-    "@storybook/addon-docs",
-  ],
-  framework: "@storybook/react-vite",
-};
-
-export default config;
+  export function initialize(callback: (ctx: WorkerContext, createData: unknown) => unknown): void;
+}

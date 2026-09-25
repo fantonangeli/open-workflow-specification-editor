@@ -14,23 +14,8 @@
  * limitations under the License.
  */
 
-import type { StorybookConfig } from "@storybook/react-vite";
+import { Locator, Page } from "@playwright/test";
 
-const config: StorybookConfig = {
-  typescript: {
-    check: true,
-  },
-  core: {
-    disableTelemetry: true,
-  },
-  stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
-  addons: [
-    "@chromatic-com/storybook",
-    "@storybook/addon-vitest",
-    "@storybook/addon-a11y",
-    "@storybook/addon-docs",
-  ],
-  framework: "@storybook/react-vite",
-};
-
-export default config;
+export function getCompletion(page: Page, label: string): Locator {
+  return page.locator(".suggest-widget .monaco-list-row").getByText(label, { exact: true });
+}

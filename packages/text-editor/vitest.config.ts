@@ -25,6 +25,12 @@ const dirname = import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.ur
 export default defineConfig({
   resolve: {
     tsconfigPaths: true,
+    alias: {
+      "monaco-editor/esm/vs/editor/editor.worker.js": path.resolve(
+        dirname,
+        "node_modules/monaco-editor/esm/vs/editor/editor.worker.js",
+      ),
+    },
   },
   test: {
     globals: true,

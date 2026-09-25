@@ -24,9 +24,19 @@ const state = {
   listener: undefined as ContentChangeListener | undefined,
 };
 
+export const mockModelDispose = vi.fn();
+
 export const mockModel = {
   getLanguageId: () => state.language,
+  uri: { toString: () => "file:///mock.json" },
+  dispose: mockModelDispose,
 };
+
+export const mockCreateModel = vi.fn((value: string, language: string) => {
+  state.value = value;
+  state.language = language;
+  return mockModel;
+});
 
 export const mockEditorSetValue = vi.fn((value: string) => {
   state.value = value;
@@ -53,15 +63,10 @@ const mockEditor = {
   },
 };
 
-export const mockEditorCreate = vi.fn(
-  (_container: HTMLElement, options: { value?: string; language?: string }) => {
-    state.value = options.value ?? "";
-    state.language = options.language ?? "json";
-    state.listener = undefined;
-
-    return mockEditor;
-  },
-);
+export const mockEditorCreate = vi.fn(() => {
+  state.listener = undefined;
+  return mockEditor;
+});
 
 export const mockSetModelLanguage = vi.fn((_model: typeof mockModel, language: string) => {
   state.language = language;
@@ -74,20 +79,21 @@ export const simulateEditorContentChange = (value: string) => {
 
 export const mockSetTheme = vi.fn();
 
+export const mockMonacoWorkerDispose = vi.fn();
+export const mockCreateWebWorker = vi.fn(() => ({
+  dispose: mockMonacoWorkerDispose,
+}));
+
 export default {
+  Uri: {
+    parse: (uri: string) => ({ toString: () => uri }),
+  },
   editor: {
+    createModel: mockCreateModel,
     create: mockEditorCreate,
     setTheme: mockSetTheme,
     setModelLanguage: mockSetModelLanguage,
+    createWebWorker: mockCreateWebWorker,
   },
-};
-
-// ---------------------------------------------------------------------------
-// TextEditorLanguageService stub for unit tests
-// ---------------------------------------------------------------------------
-
-export const mockLanguageServiceDispose = vi.fn();
-
-export const mockLanguageService = {
-  dispose: mockLanguageServiceDispose,
+  languages: {},
 };

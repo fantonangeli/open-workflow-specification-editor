@@ -14,113 +14,40 @@
  * limitations under the License.
  */
 
-/**
- * An opaque handle to the Open Workflow language service integration for the
- * Monaco text editor.
- *
- * Create **one instance per application** with
- * {@link createTextEditorLanguageService} and pass it to every
- * {@link TextEditor}. A single instance can be shared across multiple
- * `TextEditor` components — Monaco language providers are registered globally
- * per language and must not be registered more than once.
- *
- * The host application owns this object and is responsible for calling
- * {@link dispose} when the language service is no longer needed.
- *
- * @example
- * ```ts
- * const languageService = createTextEditorLanguageService({
- *   createWorker: () =>
- *     new Worker(new URL("./language.worker.ts", import.meta.url), {
- *       type: "module",
- *     }),
- * });
- *
- * <TextEditor content={content} language="json" languageService={languageService} />
- *
- * // When done with all TextEditor instances
- * languageService.dispose();
- * ```
- */
-export interface TextEditorLanguageService {
-  /**
-   * Releases all resources owned by this language service: the internal
-   * MonacoWebWorker, all registered Volar providers, and marker activation.
-   *
-   * The underlying Worker supplied via `createWorker` is terminated as part
-   * of this call because the MonacoWebWorker wrapper owns it.
-   *
-   * After calling `dispose`, the `TextEditor` instances that were using this
-   * language service lose language features but remain functional as editors.
-   */
-  dispose(): void;
-}
+import { registerProviders } from "@volar/monaco";
+import type { WorkerLanguageService } from "@volar/monaco/worker";
+import * as monaco from "monaco-editor/editor";
 
-/**
- * Options for {@link createTextEditorLanguageService}.
- */
-export interface CreateTextEditorLanguageServiceOptions {
-  /**
-   * Factory called once to create the language service Worker.
-   *
-   * The returned Worker must load the Open Workflow language worker entry
-   * point (e.g. `language.worker.ts`) which initialises the Volar language
-   * service via `createSimpleWorkerLanguageService` from `@volar/monaco/worker`.
-   *
-   * The Worker is owned by the returned {@link TextEditorLanguageService} and
-   * will be terminated when {@link TextEditorLanguageService.dispose} is
-   * called.
-   *
-   * @example
-   * ```ts
-   * createWorker: () =>
-   *   new Worker(new URL("./language.worker.ts", import.meta.url), {
-   *     type: "module",
-   *   })
-   * ```
-   */
-  createWorker: () => Worker;
-}
-
-/**
- * Creates a {@link TextEditorLanguageService} that bridges the Open Workflow
- * language service with Monaco Editor via `@volar/monaco`.
- *
- * Call this **once per application**. A single instance can be shared across
- * multiple {@link TextEditor} components — Monaco language providers are
- * registered globally per language and must not be registered more than once.
- *
- * The language service is initialised lazily: the Worker and Volar providers
- * are set up the first time the returned instance is used.
- *
- * **Lifecycle**
- *
- * - The host application creates and owns the `TextEditorLanguageService`.
- * - Individual `TextEditor` components receive it as a prop; they never
- *   create or dispose the language service.
- * - Call `languageService.dispose()` when all `TextEditor` instances using
- *   it have been unmounted and the language features are no longer needed.
- *
- * **Worker ownership**
- *
- * The Worker returned by `createWorker` is owned by the language service.
- * Calling `dispose()` terminates it.
- *
- * @param options - Configuration options including the Worker factory.
- * @returns A new `TextEditorLanguageService` instance.
- */
 export function createTextEditorLanguageService(
-  options: CreateTextEditorLanguageServiceOptions,
-): TextEditorLanguageService {
-  const { createWorker } = options;
+  model: monaco.editor.ITextModel,
+  createWorker: () => Worker,
+): monaco.IDisposable {
+  const worker = monaco.editor.createWebWorker<WorkerLanguageService>({
+    worker: createWorker(),
+  });
 
-  // Eagerly create the Worker so the host's factory is called exactly once
-  // and the Worker lifetime is clearly tied to this object.
-  const worker = createWorker();
+  let providers: monaco.IDisposable | undefined;
+  let disposed = false;
+
+  void registerProviders(worker, "json", () => [model.uri], monaco.languages)
+    .then((disposable) => {
+      if (disposed) {
+        disposable.dispose();
+      } else {
+        providers = disposable;
+      }
+    })
+    .catch((error) => {
+      if (!disposed) {
+        console.error("registerProviders failed", error);
+      }
+    });
 
   return {
     dispose() {
-      worker.terminate();
+      disposed = true;
+      providers?.dispose();
+      worker.dispose();
     },
   };
 }
