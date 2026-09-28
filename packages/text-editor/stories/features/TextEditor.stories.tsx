@@ -16,7 +16,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { createTextEditorStory } from "../helpers";
-import { helloWorldJson, helloWorldYaml } from "../samples";
+import { helloWorldJson, helloWorldYaml, invalidWorkflowJson } from "../samples";
 import { TextEditor } from "./TextEditor";
 
 const meta = {
@@ -57,5 +57,11 @@ export const ReadOnly: Story = createTextEditorStory({
 /** Empty JSON document. */
 export const EmptyJson: Story = createTextEditorStory({
   content: "",
+  language: "json",
+});
+
+/** JSON document that is syntactically valid but does not conform to the OWS schema. */
+export const InvalidWorkflow: Story = createTextEditorStory({
+  content: invalidWorkflowJson,
   language: "json",
 });

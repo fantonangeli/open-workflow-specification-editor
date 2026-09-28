@@ -20,3 +20,6 @@ export const mockProvidersDispose = vi.fn();
 export const mockRegisterProviders = vi.fn(() =>
   Promise.resolve({ dispose: mockProvidersDispose }),
 );
+
+export const mockMarkersDispose = vi.fn();
+export const mockActivateMarkers = vi.fn(() => ({ dispose: mockMarkersDispose }));

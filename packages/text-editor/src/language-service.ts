@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { registerProviders } from "@volar/monaco";
+import { activateMarkers, registerProviders } from "@volar/monaco";
 import type { WorkerLanguageService } from "@volar/monaco/worker";
 import * as monaco from "monaco-editor/editor";
 import { registerEditorCommands } from "./editor-commands";
@@ -28,6 +28,14 @@ export function createTextEditorLanguageService(
   });
 
   const commands = registerEditorCommands(model);
+
+  const markers = activateMarkers(
+    worker,
+    ["json"],
+    "openworkflow",
+    () => [model.uri],
+    monaco.editor,
+  );
 
   let providers: monaco.IDisposable | undefined;
   let disposed = false;
@@ -50,6 +58,7 @@ export function createTextEditorLanguageService(
     dispose() {
       disposed = true;
       providers?.dispose();
+      markers.dispose();
       commands.dispose();
       worker.dispose();
     },

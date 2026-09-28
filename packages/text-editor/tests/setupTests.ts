@@ -38,8 +38,8 @@ vi.mock("monaco-editor/languages/features/json/register", () => ({
 }));
 vi.mock("monaco-editor/languages/definitions/yaml/register", () => ({}));
 vi.mock("@volar/monaco", async () => {
-  const { mockRegisterProviders } = await import("./__mocks__/volar-monaco");
-  return { registerProviders: mockRegisterProviders };
+  const { mockRegisterProviders, mockActivateMarkers } = await import("./__mocks__/volar-monaco");
+  return { registerProviders: mockRegisterProviders, activateMarkers: mockActivateMarkers };
 });
 
 afterEach(cleanup);

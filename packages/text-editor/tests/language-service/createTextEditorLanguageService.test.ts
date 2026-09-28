@@ -20,7 +20,12 @@ import {
   mockMonacoWorkerDispose,
   mockModel,
 } from "../__mocks__/monaco-editor";
-import { mockRegisterProviders, mockProvidersDispose } from "../__mocks__/volar-monaco";
+import {
+  mockRegisterProviders,
+  mockProvidersDispose,
+  mockActivateMarkers,
+  mockMarkersDispose,
+} from "../__mocks__/volar-monaco";
 import { mockEditorCommandsDispose } from "../__mocks__/editor-commands";
 import { createTextEditorLanguageService } from "../../src/language-service";
 
@@ -65,6 +70,22 @@ describe("createTextEditorLanguageService", () => {
         expect.anything(),
       );
     });
+
+    it("activates markers for json", () => {
+      createTextEditorLanguageService(mockModel as never, makeWorker);
+
+      expect(mockActivateMarkers).toHaveBeenCalledOnce();
+      expect(mockActivateMarkers).toHaveBeenCalledWith(
+        expect.anything(),
+        ["json"],
+        "openworkflow",
+        expect.any(Function),
+        expect.anything(),
+      );
+
+      const getSyncUris = mockActivateMarkers.mock.calls[0][3] as () => unknown[];
+      expect(getSyncUris()).toEqual([mockModel.uri]);
+    });
   });
 
   describe("dispose", () => {
@@ -83,6 +104,13 @@ describe("createTextEditorLanguageService", () => {
       ls.dispose();
 
       expect(mockMonacoWorkerDispose).toHaveBeenCalledOnce();
+    });
+
+    it("disposes the markers before the worker on dispose", () => {
+      const ls = createTextEditorLanguageService(mockModel as never, makeWorker);
+      ls.dispose();
+
+      expect(mockMarkersDispose).toHaveBeenCalledOnce();
     });
 
     it("disposes the editor commands on dispose", () => {

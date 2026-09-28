@@ -16,6 +16,47 @@
 
 import { test, expect, Locator } from "@playwright/test";
 import { getCodeLens, getCompletion } from "./helpers";
+import helloWorldJson from "../stories/samples/hello-world.json" with { type: "json" };
+
+test.describe("TextEditor JSON diagnostics", () => {
+  test("syntactically invalid JSON shows an error marker", async ({ page }) => {
+    await page.goto("/iframe.html?id=text-editor--empty-json");
+
+    const monacoContainer = page.locator(".monaco-editor").first();
+    await expect(monacoContainer).toBeVisible();
+    await monacoContainer.click();
+
+    await page.keyboard.type("{invalid");
+
+    await expect(monacoContainer.locator(".squiggly-error").first()).toBeVisible();
+  });
+
+  test("OWS-schema-invalid JSON shows a warning marker", async ({ page }) => {
+    await page.goto("/iframe.html?id=text-editor--invalid-workflow");
+
+    const monacoContainer = page.locator(".monaco-editor").first();
+    await expect(monacoContainer).toBeVisible();
+
+    await expect(monacoContainer.locator(".squiggly-warning").first()).toBeVisible();
+  });
+
+  test("replacing OWS-invalid JSON with a valid workflow removes warning markers", async ({
+    page,
+  }) => {
+    await page.goto("/iframe.html?id=text-editor--invalid-workflow");
+
+    const monacoContainer = page.locator(".monaco-editor").first();
+    await expect(monacoContainer).toBeVisible();
+    await expect(monacoContainer.locator(".squiggly-warning").first()).toBeVisible();
+
+    await monacoContainer.click();
+    await page.keyboard.press("ControlOrMeta+a");
+    await page.keyboard.press("Delete");
+    await page.keyboard.type(JSON.stringify(helloWorldJson));
+
+    await expect(monacoContainer.locator(".squiggly-warning").first()).not.toBeVisible();
+  });
+});
 
 test.describe("TextEditor JSON", () => {
   let monacoContainer: Locator;
