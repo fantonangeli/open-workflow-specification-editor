@@ -19,3 +19,7 @@ import { Locator, Page } from "@playwright/test";
 export function getCompletion(page: Page, label: string): Locator {
   return page.locator(".suggest-widget .monaco-list-row").getByText(label, { exact: true });
 }
+
+export function getCodeLens(page: Page, title: string): Locator {
+  return page.locator(".codelens-decoration a").getByText(title, { exact: true });
+}

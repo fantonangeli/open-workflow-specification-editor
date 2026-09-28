@@ -15,7 +15,7 @@
  */
 
 import { test, expect, Locator } from "@playwright/test";
-import { getCompletion } from "./helpers";
+import { getCodeLens, getCompletion } from "./helpers";
 
 test.describe("TextEditor JSON", () => {
   let monacoContainer: Locator;
@@ -51,7 +51,7 @@ test.describe("TextEditor JSON", () => {
     await expect(monacoContainer).toContainText('{"do": []}');
   });
 
-  test("Hello World completion inserts the sample workflow", async ({ page }) => {
+  test("Hello World Completion inserts the sample workflow", async ({ page }) => {
     await page.keyboard.press("ControlOrMeta+Space");
 
     const helloWorldCompletion = getCompletion(page, "Insert Hello World workflow");
@@ -59,5 +59,13 @@ test.describe("TextEditor JSON", () => {
     await helloWorldCompletion.click();
 
     await expect(monacoContainer).toContainText('"name": "hello-world",');
+  });
+
+  test("Hello World CodeLens activates and inserts the sample workflow", async ({ page }) => {
+    const codeLens = getCodeLens(page, "Create an Open Workflow");
+    await expect(codeLens).toBeVisible();
+    await codeLens.click();
+
+    await expect(monacoContainer).toContainText('"name": "hello-world"');
   });
 });
