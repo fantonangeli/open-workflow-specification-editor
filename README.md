@@ -38,7 +38,7 @@ This project provides an interactive, visual diagram editor designed to be:
 
 To build and run the editor locally, you will need:
 
-- **Node.js**: `^22.13.0 || >=24.0.0` (see [nodejs.org](https://nodejs.org/))
+- **Node.js**: `^22.22.2 || ^24.15.0 || >=26.0.0` (see [nodejs.org](https://nodejs.org/))
 - **pnpm**: `10.31.0` (exact version, enforced by `packageManager` field)
 
 ## Getting Started with the Diagram Editor
