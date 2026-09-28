@@ -17,6 +17,7 @@
 import { registerProviders } from "@volar/monaco";
 import type { WorkerLanguageService } from "@volar/monaco/worker";
 import * as monaco from "monaco-editor/editor";
+import { registerEditorCommands } from "./editor-commands";
 
 export function createTextEditorLanguageService(
   model: monaco.editor.ITextModel,
@@ -25,6 +26,8 @@ export function createTextEditorLanguageService(
   const worker = monaco.editor.createWebWorker<WorkerLanguageService>({
     worker: createWorker(),
   });
+
+  const commands = registerEditorCommands(model);
 
   let providers: monaco.IDisposable | undefined;
   let disposed = false;
@@ -47,6 +50,7 @@ export function createTextEditorLanguageService(
     dispose() {
       disposed = true;
       providers?.dispose();
+      commands.dispose();
       worker.dispose();
     },
   };

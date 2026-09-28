@@ -25,11 +25,20 @@ const state = {
 };
 
 export const mockModelDispose = vi.fn();
+export const mockModelPushEditOperations = vi.fn();
+export const mockModelGetFullModelRange = vi.fn(() => ({
+  startLineNumber: 1,
+  startColumn: 1,
+  endLineNumber: 1,
+  endColumn: 1,
+}));
 
 export const mockModel = {
   getLanguageId: () => state.language,
   uri: { toString: () => "file:///mock.json" },
   dispose: mockModelDispose,
+  getFullModelRange: mockModelGetFullModelRange,
+  pushEditOperations: mockModelPushEditOperations,
 };
 
 export const mockCreateModel = vi.fn((value: string, language: string) => {
@@ -84,6 +93,11 @@ export const mockCreateWebWorker = vi.fn(() => ({
   dispose: mockMonacoWorkerDispose,
 }));
 
+export const mockCommandDispose = vi.fn();
+export const mockRegisterCommand = vi.fn(() => ({
+  dispose: mockCommandDispose,
+}));
+
 export default {
   Uri: {
     parse: (uri: string) => ({ toString: () => uri }),
@@ -94,6 +108,7 @@ export default {
     setTheme: mockSetTheme,
     setModelLanguage: mockSetModelLanguage,
     createWebWorker: mockCreateWebWorker,
+    registerCommand: mockRegisterCommand,
   },
   languages: {},
 };

@@ -21,7 +21,13 @@ import {
   mockModel,
 } from "../__mocks__/monaco-editor";
 import { mockRegisterProviders, mockProvidersDispose } from "../__mocks__/volar-monaco";
+import { mockEditorCommandsDispose } from "../__mocks__/editor-commands";
 import { createTextEditorLanguageService } from "../../src/language-service";
+
+vi.mock("../../src/editor-commands", async () => {
+  const { mockRegisterEditorCommands } = await import("../__mocks__/editor-commands");
+  return { registerEditorCommands: mockRegisterEditorCommands };
+});
 
 const makeWorker = () => ({ terminate: vi.fn() }) as unknown as Worker;
 
@@ -77,6 +83,14 @@ describe("createTextEditorLanguageService", () => {
       ls.dispose();
 
       expect(mockMonacoWorkerDispose).toHaveBeenCalledOnce();
+    });
+
+    it("disposes the editor commands on dispose", () => {
+      const ls = createTextEditorLanguageService(mockModel as never, makeWorker);
+
+      ls.dispose();
+
+      expect(mockEditorCommandsDispose).toHaveBeenCalledOnce();
     });
   });
 });
