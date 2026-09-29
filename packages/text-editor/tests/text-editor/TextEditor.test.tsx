@@ -21,6 +21,7 @@ import { useResolvedColorMode } from "../../src/hooks/useResolvedColorMode";
 
 import {
   mockCreateModel,
+  mockCreateWebWorker,
   mockEditorCreate,
   mockEditorDispose,
   mockEditorSetValue,
@@ -137,15 +138,24 @@ describe("TextEditor", () => {
   });
 
   describe("language", () => {
-    it("updates the model language without recreating Monaco", () => {
-      const { rerenderEditor } = renderEditor({ language: "json" });
+    it.each([
+      { fromLang: "json", toLang: "yaml" },
+      { fromLang: "yaml", toLang: "json" },
+    ] as const)(
+      "$fromLang → $toLang: updates the model language without recreating editor, model or language service",
+      ({ fromLang, toLang }) => {
+        const { rerenderEditor } = renderEditor({ language: fromLang });
 
-      rerenderEditor({ language: "yaml" });
+        rerenderEditor({ language: toLang });
 
-      expect(mockEditorCreate).toHaveBeenCalledOnce();
-      expect(mockSetModelLanguage).toHaveBeenCalledOnce();
-      expect(mockSetModelLanguage).toHaveBeenCalledWith(mockModel, "yaml");
-    });
+        expect(mockSetModelLanguage).toHaveBeenCalledOnce();
+        expect(mockSetModelLanguage).toHaveBeenCalledWith(mockModel, toLang);
+        expect(mockEditorCreate).toHaveBeenCalledOnce();
+        expect(mockCreateModel).toHaveBeenCalledOnce();
+        expect(createLanguageServiceWorker).toHaveBeenCalledOnce();
+        expect(mockCreateWebWorker).toHaveBeenCalledOnce();
+      },
+    );
   });
 
   describe("read-only", () => {
