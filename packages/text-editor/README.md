@@ -81,7 +81,7 @@ Multiple concurrently mounted Text Editor instances and shared-worker reuse are 
 
 | Language | Syntax highlighting | OWS completions | OWS diagnostics | OWS code lenses |
 | -------- | ------------------- | --------------- | --------------- | --------------- |
-| JSON     | ✅                  | ✅              | 🚧 planned      | 🚧 planned      |
+| JSON     | ✅                  | ✅              | ✅              | ✅              |
 | YAML     | ✅                  | 🚧 planned      | 🚧 planned      | 🚧 planned      |
 
 YAML language-service support is not yet available. Until then, YAML documents use Monaco's built-in syntax highlighting and language configuration only.

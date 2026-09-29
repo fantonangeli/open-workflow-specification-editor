@@ -44,9 +44,12 @@ test.describe("TextEditor JSON", () => {
       await page.keyboard.press("Escape");
       await page.keyboard.press("ControlOrMeta+Space");
 
-      await expect(getCompletion(page, "document")).toBeVisible();
+      const documentCompletion = getCompletion(page, "document");
+      await expect(documentCompletion).toHaveCount(1);
+      await expect(documentCompletion).toBeVisible();
 
       const doCompletion = getCompletion(page, "do");
+      await expect(doCompletion).toHaveCount(1);
       await expect(doCompletion).toBeVisible();
       await doCompletion.click();
 
