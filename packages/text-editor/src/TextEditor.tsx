@@ -74,6 +74,7 @@ export const TextEditor = ({
     const editor = monaco.editor.create(containerRef.current, {
       model,
       readOnly: isReadOnly,
+      codeLens: !isReadOnly,
       automaticLayout: true,
       renderLineHighlight: "none",
       ...(resolvedColorMode && {
@@ -133,7 +134,7 @@ export const TextEditor = ({
   }, [language]);
 
   React.useEffect(() => {
-    editorRef.current?.updateOptions({ readOnly: isReadOnly });
+    editorRef.current?.updateOptions({ readOnly: isReadOnly, codeLens: !isReadOnly });
   }, [isReadOnly]);
 
   React.useEffect(() => {

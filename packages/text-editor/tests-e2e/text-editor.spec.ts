@@ -75,6 +75,15 @@ test.describe("TextEditor JSON", () => {
 
       await expect(monacoContainer).toContainText('"name": "hello-world"');
     });
+
+    test("CodeLens is hidden in read-only mode", async ({ page }) => {
+      await page.goto("/iframe.html?id=text-editor--empty-json&args=isReadOnly:!true");
+
+      const monacoContainer = page.locator(".monaco-editor").first();
+      await expect(monacoContainer).toBeVisible();
+
+      await expect(getCodeLens(page, "Create an Open Workflow")).not.toBeVisible();
+    });
   });
 
   test.describe("Diagnostics", () => {

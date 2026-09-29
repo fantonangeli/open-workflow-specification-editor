@@ -159,25 +159,34 @@ describe("TextEditor", () => {
   });
 
   describe("read-only", () => {
-    it("passes readOnly to Monaco at creation time", () => {
+    it("passes readOnly and codeLens to Monaco at creation time", () => {
       const { container } = renderEditor({ isReadOnly: true });
 
       expect(mockEditorCreate).toHaveBeenCalledWith(
         container.firstElementChild,
-        expect.objectContaining({ readOnly: true }),
+        expect.objectContaining({ readOnly: true, codeLens: false }),
       );
     });
 
-    it("updates readOnly without recreating Monaco", () => {
-      const { rerenderEditor } = renderEditor({ isReadOnly: false });
-      mockEditorUpdateOptions.mockClear();
+    it.each([
+      { isReadOnly: true, expectedCodeLens: false },
+      { isReadOnly: false, expectedCodeLens: true },
+    ] as const)(
+      "updates readOnly=$isReadOnly and codeLens=$expectedCodeLens without recreating Monaco",
+      ({ isReadOnly, expectedCodeLens }) => {
+        const { rerenderEditor } = renderEditor({ isReadOnly: !isReadOnly });
+        mockEditorUpdateOptions.mockClear();
 
-      rerenderEditor({ isReadOnly: true });
+        rerenderEditor({ isReadOnly });
 
-      expect(mockEditorCreate).toHaveBeenCalledOnce();
-      expect(mockEditorUpdateOptions).toHaveBeenCalledOnce();
-      expect(mockEditorUpdateOptions).toHaveBeenCalledWith({ readOnly: true });
-    });
+        expect(mockEditorCreate).toHaveBeenCalledOnce();
+        expect(mockEditorUpdateOptions).toHaveBeenCalledOnce();
+        expect(mockEditorUpdateOptions).toHaveBeenCalledWith({
+          readOnly: isReadOnly,
+          codeLens: expectedCodeLens,
+        });
+      },
+    );
   });
 
   describe("lifecycle", () => {

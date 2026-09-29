@@ -21,7 +21,7 @@ const config: StorybookConfig = {
     check: true,
   },
   core: {
-    disableTelemetry: true,
+    disableTelemetry: true, // Do not collect data
   },
   stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
