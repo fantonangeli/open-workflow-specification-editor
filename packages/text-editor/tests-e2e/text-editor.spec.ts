@@ -107,8 +107,13 @@ test.describe("TextEditor JSON", () => {
 
       await monacoContainer.click();
       await page.keyboard.press("ControlOrMeta+a");
-      await page.keyboard.press("Delete");
-      await page.keyboard.type(JSON.stringify(helloWorldJson));
+      // Use clipboard paste instead of keyboard.type: Monaco auto-indents after each newline,
+      // which corrupts the formatting when typing multi-line text character by character.
+      await page.evaluate(
+        (text) => navigator.clipboard.writeText(text),
+        JSON.stringify(helloWorldJson, null, 2),
+      );
+      await page.keyboard.press("ControlOrMeta+v");
 
       await expect(monacoContainer.locator(".squiggly-warning").first()).not.toBeVisible();
     });
