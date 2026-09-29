@@ -106,7 +106,7 @@ describe("createTextEditorLanguageService", () => {
       expect(mockMonacoWorkerDispose).toHaveBeenCalledOnce();
     });
 
-    it("disposes the markers before the worker on dispose", () => {
+    it("disposes the markers on dispose", () => {
       const ls = createTextEditorLanguageService(mockModel as never, makeWorker);
       ls.dispose();
 

@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-import { test, expect, Locator } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 import { getCodeLens, getCompletion } from "./helpers";
 import helloWorldJson from "../stories/samples/hello-world.json" with { type: "json" };
 
+async function openTextEditor(
+  page: Page,
+  url = "/iframe.html?id=text-editor--empty-json",
+): Promise<Locator> {
+  await page.goto(url);
+
+  const monacoContainer = page.locator(".monaco-editor").first();
+  await monacoContainer.waitFor({ state: "visible" });
+  await monacoContainer.click();
+
+  return monacoContainer;
+}
+
 test.describe("TextEditor JSON", () => {
-  let monacoContainer: Locator;
-
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/iframe.html?id=text-editor--empty-json");
-
-    monacoContainer = page.locator(".monaco-editor").first();
-    await expect(monacoContainer).toBeVisible();
-
-    await monacoContainer.click();
-  });
-
   test("Monaco editor is interactive", async ({ page }) => {
+    const monacoContainer = await openTextEditor(page);
+
     await page.keyboard.type("Lorem ipsum");
 
     await expect(monacoContainer).toContainText("Lorem ipsum");
@@ -38,6 +42,8 @@ test.describe("TextEditor JSON", () => {
 
   test.describe("Completions", () => {
     test("JSON schema completion adds the `do` property", async ({ page }) => {
+      const monacoContainer = await openTextEditor(page);
+
       await page.keyboard.type("{}");
       await page.keyboard.press("ControlOrMeta+Home");
       await page.keyboard.press("ArrowRight");
@@ -57,6 +63,8 @@ test.describe("TextEditor JSON", () => {
     });
 
     test("Hello World Completion inserts the sample workflow", async ({ page }) => {
+      const monacoContainer = await openTextEditor(page);
+
       await page.keyboard.press("ControlOrMeta+Space");
 
       const helloWorldCompletion = getCompletion(page, "Insert Hello World workflow");
@@ -69,6 +77,8 @@ test.describe("TextEditor JSON", () => {
 
   test.describe("CodeLenses", () => {
     test("Hello World CodeLens activates and inserts the sample workflow", async ({ page }) => {
+      const monacoContainer = await openTextEditor(page);
+
       const codeLens = getCodeLens(page, "Create an Open Workflow");
       await expect(codeLens).toBeVisible();
       await codeLens.click();
@@ -77,10 +87,7 @@ test.describe("TextEditor JSON", () => {
     });
 
     test("CodeLens is hidden in read-only mode", async ({ page }) => {
-      await page.goto("/iframe.html?id=text-editor--empty-json&args=isReadOnly:!true");
-
-      const monacoContainer = page.locator(".monaco-editor").first();
-      await expect(monacoContainer).toBeVisible();
+      await openTextEditor(page, "/iframe.html?id=text-editor--empty-json&args=isReadOnly:!true");
 
       await expect(getCodeLens(page, "Create an Open Workflow")).not.toBeVisible();
     });
@@ -88,11 +95,7 @@ test.describe("TextEditor JSON", () => {
 
   test.describe("Diagnostics", () => {
     test("syntactically invalid JSON shows an error marker", async ({ page }) => {
-      await page.goto("/iframe.html?id=text-editor--empty-json");
-
-      const monacoContainer = page.locator(".monaco-editor").first();
-      await expect(monacoContainer).toBeVisible();
-      await monacoContainer.click();
+      const monacoContainer = await openTextEditor(page);
 
       await page.keyboard.type("{invalid");
 
@@ -100,10 +103,10 @@ test.describe("TextEditor JSON", () => {
     });
 
     test("OWS-schema-invalid JSON shows a warning marker", async ({ page }) => {
-      await page.goto("/iframe.html?id=text-editor--invalid-workflow");
-
-      const monacoContainer = page.locator(".monaco-editor").first();
-      await expect(monacoContainer).toBeVisible();
+      const monacoContainer = await openTextEditor(
+        page,
+        "/iframe.html?id=text-editor--invalid-workflow",
+      );
 
       await expect(monacoContainer.locator(".squiggly-warning").first()).toBeVisible();
     });
@@ -111,13 +114,13 @@ test.describe("TextEditor JSON", () => {
     test("replacing OWS-invalid JSON with a valid workflow removes warning markers", async ({
       page,
     }) => {
-      await page.goto("/iframe.html?id=text-editor--invalid-workflow");
+      const monacoContainer = await openTextEditor(
+        page,
+        "/iframe.html?id=text-editor--invalid-workflow",
+      );
 
-      const monacoContainer = page.locator(".monaco-editor").first();
-      await expect(monacoContainer).toBeVisible();
       await expect(monacoContainer.locator(".squiggly-warning").first()).toBeVisible();
 
-      await monacoContainer.click();
       await page.keyboard.press("ControlOrMeta+a");
       // Use clipboard paste instead of keyboard.type: Monaco auto-indents after each newline,
       // which corrupts the formatting when typing multi-line text character by character.
