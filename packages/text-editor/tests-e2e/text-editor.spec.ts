@@ -18,46 +18,6 @@ import { test, expect, Locator } from "@playwright/test";
 import { getCodeLens, getCompletion } from "./helpers";
 import helloWorldJson from "../stories/samples/hello-world.json" with { type: "json" };
 
-test.describe("TextEditor JSON diagnostics", () => {
-  test("syntactically invalid JSON shows an error marker", async ({ page }) => {
-    await page.goto("/iframe.html?id=text-editor--empty-json");
-
-    const monacoContainer = page.locator(".monaco-editor").first();
-    await expect(monacoContainer).toBeVisible();
-    await monacoContainer.click();
-
-    await page.keyboard.type("{invalid");
-
-    await expect(monacoContainer.locator(".squiggly-error").first()).toBeVisible();
-  });
-
-  test("OWS-schema-invalid JSON shows a warning marker", async ({ page }) => {
-    await page.goto("/iframe.html?id=text-editor--invalid-workflow");
-
-    const monacoContainer = page.locator(".monaco-editor").first();
-    await expect(monacoContainer).toBeVisible();
-
-    await expect(monacoContainer.locator(".squiggly-warning").first()).toBeVisible();
-  });
-
-  test("replacing OWS-invalid JSON with a valid workflow removes warning markers", async ({
-    page,
-  }) => {
-    await page.goto("/iframe.html?id=text-editor--invalid-workflow");
-
-    const monacoContainer = page.locator(".monaco-editor").first();
-    await expect(monacoContainer).toBeVisible();
-    await expect(monacoContainer.locator(".squiggly-warning").first()).toBeVisible();
-
-    await monacoContainer.click();
-    await page.keyboard.press("ControlOrMeta+a");
-    await page.keyboard.press("Delete");
-    await page.keyboard.type(JSON.stringify(helloWorldJson));
-
-    await expect(monacoContainer.locator(".squiggly-warning").first()).not.toBeVisible();
-  });
-});
-
 test.describe("TextEditor JSON", () => {
   let monacoContainer: Locator;
 
@@ -76,37 +36,81 @@ test.describe("TextEditor JSON", () => {
     await expect(monacoContainer).toContainText("Lorem ipsum");
   });
 
-  test("JSON schema completion adds the `do` property", async ({ page }) => {
-    await page.keyboard.type("{}");
-    await page.keyboard.press("ControlOrMeta+Home");
-    await page.keyboard.press("ArrowRight");
-    await page.keyboard.press("Escape");
-    await page.keyboard.press("ControlOrMeta+Space");
+  test.describe("Completions", () => {
+    test("JSON schema completion adds the `do` property", async ({ page }) => {
+      await page.keyboard.type("{}");
+      await page.keyboard.press("ControlOrMeta+Home");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("Escape");
+      await page.keyboard.press("ControlOrMeta+Space");
 
-    await expect(getCompletion(page, "document")).toBeVisible();
+      await expect(getCompletion(page, "document")).toBeVisible();
 
-    const doCompletion = getCompletion(page, "do");
-    await expect(doCompletion).toBeVisible();
-    await doCompletion.click();
+      const doCompletion = getCompletion(page, "do");
+      await expect(doCompletion).toBeVisible();
+      await doCompletion.click();
 
-    await expect(monacoContainer).toContainText('{"do": []}');
+      await expect(monacoContainer).toContainText('{"do": []}');
+    });
+
+    test("Hello World Completion inserts the sample workflow", async ({ page }) => {
+      await page.keyboard.press("ControlOrMeta+Space");
+
+      const helloWorldCompletion = getCompletion(page, "Insert Hello World workflow");
+      await expect(helloWorldCompletion).toBeVisible();
+      await helloWorldCompletion.click();
+
+      await expect(monacoContainer).toContainText('"name": "hello-world",');
+    });
   });
 
-  test("Hello World Completion inserts the sample workflow", async ({ page }) => {
-    await page.keyboard.press("ControlOrMeta+Space");
+  test.describe("CodeLenses", () => {
+    test("Hello World CodeLens activates and inserts the sample workflow", async ({ page }) => {
+      const codeLens = getCodeLens(page, "Create an Open Workflow");
+      await expect(codeLens).toBeVisible();
+      await codeLens.click();
 
-    const helloWorldCompletion = getCompletion(page, "Insert Hello World workflow");
-    await expect(helloWorldCompletion).toBeVisible();
-    await helloWorldCompletion.click();
-
-    await expect(monacoContainer).toContainText('"name": "hello-world",');
+      await expect(monacoContainer).toContainText('"name": "hello-world"');
+    });
   });
 
-  test("Hello World CodeLens activates and inserts the sample workflow", async ({ page }) => {
-    const codeLens = getCodeLens(page, "Create an Open Workflow");
-    await expect(codeLens).toBeVisible();
-    await codeLens.click();
+  test.describe("Diagnostics", () => {
+    test("syntactically invalid JSON shows an error marker", async ({ page }) => {
+      await page.goto("/iframe.html?id=text-editor--empty-json");
 
-    await expect(monacoContainer).toContainText('"name": "hello-world"');
+      const monacoContainer = page.locator(".monaco-editor").first();
+      await expect(monacoContainer).toBeVisible();
+      await monacoContainer.click();
+
+      await page.keyboard.type("{invalid");
+
+      await expect(monacoContainer.locator(".squiggly-error").first()).toBeVisible();
+    });
+
+    test("OWS-schema-invalid JSON shows a warning marker", async ({ page }) => {
+      await page.goto("/iframe.html?id=text-editor--invalid-workflow");
+
+      const monacoContainer = page.locator(".monaco-editor").first();
+      await expect(monacoContainer).toBeVisible();
+
+      await expect(monacoContainer.locator(".squiggly-warning").first()).toBeVisible();
+    });
+
+    test("replacing OWS-invalid JSON with a valid workflow removes warning markers", async ({
+      page,
+    }) => {
+      await page.goto("/iframe.html?id=text-editor--invalid-workflow");
+
+      const monacoContainer = page.locator(".monaco-editor").first();
+      await expect(monacoContainer).toBeVisible();
+      await expect(monacoContainer.locator(".squiggly-warning").first()).toBeVisible();
+
+      await monacoContainer.click();
+      await page.keyboard.press("ControlOrMeta+a");
+      await page.keyboard.press("Delete");
+      await page.keyboard.type(JSON.stringify(helloWorldJson));
+
+      await expect(monacoContainer.locator(".squiggly-warning").first()).not.toBeVisible();
+    });
   });
 });
