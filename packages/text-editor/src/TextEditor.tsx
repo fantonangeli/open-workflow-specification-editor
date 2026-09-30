@@ -74,7 +74,7 @@ export const TextEditor = ({
     const editor = monaco.editor.create(containerRef.current, {
       model,
       readOnly: isReadOnly,
-      codeLens: !isReadOnly,
+      codeLens: language === "json" && !isReadOnly,
       automaticLayout: true,
       renderLineHighlight: "none",
       ...(resolvedColorMode && {
@@ -126,16 +126,19 @@ export const TextEditor = ({
   }, [content]);
 
   React.useEffect(() => {
-    const model = editorRef.current?.getModel();
+    const editor = editorRef.current;
+    if (!editor) {
+      return;
+    }
 
+    // updateOptions must run before setModelLanguage so that codeLens is applied
+    editor.updateOptions({ readOnly: isReadOnly, codeLens: language === "json" && !isReadOnly });
+
+    const model = editor.getModel();
     if (model && model.getLanguageId() !== language) {
       monaco.editor.setModelLanguage(model, language);
     }
-  }, [language]);
-
-  React.useEffect(() => {
-    editorRef.current?.updateOptions({ readOnly: isReadOnly, codeLens: !isReadOnly });
-  }, [isReadOnly]);
+  }, [isReadOnly, language]);
 
   React.useEffect(() => {
     if (!editorRef.current) {

@@ -21,5 +21,5 @@ export function getCompletion(page: Page, label: string): Locator {
 }
 
 export function getCodeLens(page: Page, title: string): Locator {
-  return page.locator(".codelens-decoration a").getByText(title, { exact: true });
+  return page.locator(".codelens-decoration").getByText(title, { exact: true });
 }

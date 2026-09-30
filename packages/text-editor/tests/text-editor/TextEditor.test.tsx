@@ -139,23 +139,42 @@ describe("TextEditor", () => {
 
   describe("language", () => {
     it.each([
-      { fromLang: "json", toLang: "yaml" },
-      { fromLang: "yaml", toLang: "json" },
+      { fromLang: "json", toLang: "yaml", expectedCodeLens: false },
+      { fromLang: "yaml", toLang: "json", expectedCodeLens: true },
     ] as const)(
-      "$fromLang → $toLang: updates the model language without recreating editor, model or language service",
-      ({ fromLang, toLang }) => {
+      "$fromLang → $toLang: updates codeLens before changing model language",
+      ({ fromLang, toLang, expectedCodeLens }) => {
         const { rerenderEditor } = renderEditor({ language: fromLang });
+        mockEditorUpdateOptions.mockClear();
+        mockSetModelLanguage.mockClear();
 
         rerenderEditor({ language: toLang });
 
+        expect(mockEditorUpdateOptions).toHaveBeenCalledOnce();
+        expect(mockEditorUpdateOptions).toHaveBeenCalledWith(
+          expect.objectContaining({ codeLens: expectedCodeLens }),
+        );
+
         expect(mockSetModelLanguage).toHaveBeenCalledOnce();
         expect(mockSetModelLanguage).toHaveBeenCalledWith(mockModel, toLang);
-        expect(mockEditorCreate).toHaveBeenCalledOnce();
-        expect(mockCreateModel).toHaveBeenCalledOnce();
-        expect(createLanguageServiceWorker).toHaveBeenCalledOnce();
-        expect(mockCreateWebWorker).toHaveBeenCalledOnce();
+
+        expect(mockEditorUpdateOptions.mock.invocationCallOrder[0]).toBeLessThan(
+          mockSetModelLanguage.mock.invocationCallOrder[0],
+        );
       },
     );
+
+    it("YAML + isReadOnly true → false: codeLens stays false", () => {
+      const { rerenderEditor } = renderEditor({ language: "yaml", isReadOnly: true });
+      mockEditorUpdateOptions.mockClear();
+
+      rerenderEditor({ isReadOnly: false });
+
+      expect(mockEditorCreate).toHaveBeenCalledOnce();
+      expect(mockEditorUpdateOptions).toHaveBeenCalledWith(
+        expect.objectContaining({ codeLens: false }),
+      );
+    });
   });
 
   describe("read-only", () => {
@@ -190,7 +209,7 @@ describe("TextEditor", () => {
   });
 
   describe("lifecycle", () => {
-    it("does not recreate Monaco when props change", () => {
+    it("does not recreate Monaco or the language service when props change", () => {
       const { rerenderEditor } = renderEditor({ content: "v1" });
 
       rerenderEditor({ content: "v2" });
@@ -199,6 +218,9 @@ describe("TextEditor", () => {
       rerenderEditor({ onContentChange: vi.fn() });
 
       expect(mockEditorCreate).toHaveBeenCalledOnce();
+      expect(mockCreateModel).toHaveBeenCalledOnce();
+      expect(createLanguageServiceWorker).toHaveBeenCalledOnce();
+      expect(mockCreateWebWorker).toHaveBeenCalledOnce();
     });
 
     it("disposes language service, editor and model on unmount", () => {

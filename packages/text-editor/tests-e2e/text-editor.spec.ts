@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { test, expect, Page } from "@playwright/test";
+import { test, expect, Locator, Page } from "@playwright/test";
 import { getCodeLens, getCompletion } from "./helpers";
 import helloWorldJson from "../stories/samples/hello-world.json" with { type: "json" };
 
@@ -80,6 +80,7 @@ test.describe("TextEditor JSON", () => {
       const monacoContainer = await openTextEditor(page);
 
       const codeLens = getCodeLens(page, "Create an Open Workflow");
+      await expect(codeLens).toHaveRole("button");
       await expect(codeLens).toBeVisible();
       await codeLens.click();
 
@@ -90,6 +91,48 @@ test.describe("TextEditor JSON", () => {
       await openTextEditor(page, "/iframe.html?id=text-editor--empty-json&args=isReadOnly:!true");
 
       await expect(getCodeLens(page, "Create an Open Workflow")).not.toBeVisible();
+    });
+
+    test("JSON → YAML: CodeLens disappears after language switch", async ({ page }) => {
+      await openTextEditor(page);
+
+      const codeLens = getCodeLens(page, "Create an Open Workflow");
+      await expect(codeLens).toBeVisible();
+
+      await page.evaluate(() => {
+        window.textEditorSetLanguage?.("yaml");
+      });
+
+      await expect(codeLens).not.toBeVisible();
+    });
+
+    test("YAML → JSON: CodeLens reappears after language switch", async ({ page }) => {
+      await openTextEditor(page, "/iframe.html?id=text-editor--empty-json&args=language:yaml");
+
+      const codeLens = getCodeLens(page, "Create an Open Workflow");
+      await expect(codeLens).not.toBeVisible();
+
+      await page.evaluate(() => {
+        window.textEditorSetLanguage?.("json");
+      });
+
+      await expect(codeLens).toBeVisible();
+    });
+
+    test("YAML + isReadOnly true → false: CodeLens stays hidden", async ({ page }) => {
+      await openTextEditor(
+        page,
+        "/iframe.html?id=text-editor--empty-json&args=language:yaml;isReadOnly:!true",
+      );
+
+      const codeLens = getCodeLens(page, "Create an Open Workflow");
+      await expect(codeLens).not.toBeVisible();
+
+      await page.evaluate(() => {
+        window.textEditorSetIsReadOnly?.(false);
+      });
+
+      await expect(codeLens).not.toBeVisible();
     });
   });
 
