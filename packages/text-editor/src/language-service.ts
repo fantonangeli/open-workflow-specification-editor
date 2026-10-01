@@ -24,7 +24,7 @@ export function createTextEditorLanguageService(
   createWorker: () => Worker,
 ): monaco.IDisposable {
   const worker = monaco.editor.createWebWorker<WorkerLanguageService>({
-    worker: createWorker(),
+    worker: Promise.resolve(createWorker()),
   });
 
   const commands = registerEditorCommands(model);

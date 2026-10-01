@@ -50,13 +50,15 @@ describe("createTextEditorLanguageService", () => {
       expect(createWorker).toHaveBeenCalledOnce();
     });
 
-    it("wraps the Worker in a MonacoWebWorker", () => {
+    it("wraps the Worker in a MonacoWebWorker", async () => {
       const worker = makeWorker();
 
       createTextEditorLanguageService(mockModel as never, () => worker);
 
       expect(mockCreateWebWorker).toHaveBeenCalledOnce();
-      expect(mockCreateWebWorker).toHaveBeenCalledWith(expect.objectContaining({ worker }));
+
+      const [options] = vi.mocked(mockCreateWebWorker).mock.lastCall!;
+      await expect(options.worker).resolves.toBe(worker);
     });
 
     it("registers Volar providers for json", () => {
