@@ -45,8 +45,7 @@ test.describe("TextEditor JSON", () => {
       const monacoContainer = await openTextEditor(page);
 
       await page.keyboard.type("{}");
-      await page.keyboard.press("ControlOrMeta+Home");
-      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("ArrowLeft");
       await page.keyboard.press("Escape");
       await page.keyboard.press("Control+Space");
 
