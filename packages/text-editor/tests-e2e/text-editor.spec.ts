@@ -48,7 +48,7 @@ test.describe("TextEditor JSON", () => {
       await page.keyboard.press("ControlOrMeta+Home");
       await page.keyboard.press("ArrowRight");
       await page.keyboard.press("Escape");
-      await page.keyboard.press("ControlOrMeta+Space");
+      await page.keyboard.press("Control+Space");
 
       const documentCompletion = getCompletion(page, "document");
       await expect(documentCompletion).toHaveCount(1);
@@ -65,7 +65,7 @@ test.describe("TextEditor JSON", () => {
     test("Hello World Completion inserts the sample workflow", async ({ page }) => {
       const monacoContainer = await openTextEditor(page);
 
-      await page.keyboard.press("ControlOrMeta+Space");
+      await page.keyboard.press("Control+Space");
 
       const helloWorldCompletion = getCompletion(page, "Insert Hello World workflow");
       await expect(helloWorldCompletion).toBeVisible();
