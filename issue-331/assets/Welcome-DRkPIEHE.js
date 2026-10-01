@@ -1,4 +1,4 @@
-import{n as e}from"./rolldown-runtime-DkW27tQK.js";import{n as t}from"./iframe-BRLLjB-0.js";import{i as n,r}from"./react-DpTkBzf4.js";import{a as i,o as a}from"./blocks-CSFTy6Ya.js";function o(e){let t={a:`a`,code:`code`,h1:`h1`,h2:`h2`,li:`li`,p:`p`,pre:`pre`,strong:`strong`,ul:`ul`,...n(),...e.components};return(0,c.jsxs)(c.Fragment,{children:[`
+import{n as e}from"./rolldown-runtime-DkW27tQK.js";import{n as t}from"./iframe-DpHnykPY.js";import{i as n,r}from"./react-CazYGlef.js";import{a as i,o as a}from"./blocks-CeRZ55Bi.js";function o(e){let t={a:`a`,code:`code`,h1:`h1`,h2:`h2`,li:`li`,p:`p`,pre:`pre`,strong:`strong`,ul:`ul`,...n(),...e.components};return(0,c.jsxs)(c.Fragment,{children:[`
 `,`
 `,(0,c.jsx)(i,{title:`Introduction/Welcome`}),`
 `,(0,c.jsx)(t.h1,{id:`welcome-to-the-text-editor`,children:`Welcome to the Text Editor`}),`
