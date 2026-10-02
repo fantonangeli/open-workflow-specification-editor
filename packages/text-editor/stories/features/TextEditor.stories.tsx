@@ -15,6 +15,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Controls, Primary, Title } from "@storybook/addon-docs/blocks";
 import { createTextEditorStory } from "../helpers";
 import { helloWorldJson, helloWorldYaml, invalidWorkflowJson } from "../samples";
 import { TextEditor } from "./TextEditor";
@@ -26,6 +27,15 @@ const meta = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      page: () => (
+        <>
+          <Title />
+          <Primary />
+          <Controls />
+        </>
+      ),
+    },
   },
   render: (args) => {
     return <TextEditor {...args} />;
