@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Monaco 0.56.0 exposes this worker module at runtime but does not provide typeScript declarations for it.
+// Monaco exposes this worker module at runtime but does not provide typeScript declarations for it.
+// See https://github.com/volarjs/volar.js/issues/321.
 declare module "monaco-editor/editor/editor.worker.js" {
   type WorkerContext = Parameters<
     typeof import("@volar/monaco/worker").createSimpleWorkerLanguageService
