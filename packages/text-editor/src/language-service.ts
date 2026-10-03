@@ -29,18 +29,14 @@ export function createTextEditorLanguageService(
 
   const commands = registerEditorCommands(model);
 
-  const markers = activateMarkers(
-    worker,
-    ["json"],
-    "openworkflow",
-    () => [model.uri],
-    monaco.editor,
-  );
+  const getSyncUris = () => (model.getLanguageId() === "json" ? [model.uri] : []);
+
+  const markers = activateMarkers(worker, ["json"], "openworkflow", getSyncUris, monaco.editor);
 
   let providers: monaco.IDisposable | undefined;
   let disposed = false;
 
-  void registerProviders(worker, "json", () => [model.uri], monaco.languages)
+  void registerProviders(worker, "json", getSyncUris, monaco.languages)
     .then((disposable) => {
       if (disposed) {
         disposable.dispose();
