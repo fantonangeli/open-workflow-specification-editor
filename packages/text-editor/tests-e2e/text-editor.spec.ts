@@ -72,6 +72,18 @@ test.describe("TextEditor JSON", () => {
 
       await expect(monacoContainer).toContainText('"name": "hello-world",');
     });
+
+    test("completions are not available in read-only mode", async ({ page }) => {
+      const monacoContainer = await openTextEditor(
+        page,
+        "/iframe.html?id=text-editor--empty-json&args=isReadOnly:!true",
+      );
+
+      await page.keyboard.press("Control+Space");
+
+      await expect(getCompletion(page, "Insert Hello World workflow")).not.toBeVisible();
+      await expect(monacoContainer).not.toContainText('"name": "hello-world"');
+    });
   });
 
   test.describe("CodeLenses", () => {
