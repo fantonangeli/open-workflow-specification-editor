@@ -18,4 +18,3 @@ import { TextEditorElement } from "./text-editor-element";
 if (!customElements.get("openworkflowspec-text-editor")) {
     customElements.define("openworkflowspec-text-editor", TextEditorElement);
 }
-export { TextEditorElement };
