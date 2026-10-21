@@ -207,6 +207,9 @@ importers:
 
   examples/vanilla-web-component:
     dependencies:
+      '@openworkflowspec/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@openworkflowspec/diagram-editor':
         specifier: workspace:*
         version: link:../../packages/open-workflow-diagram-editor
@@ -250,6 +253,33 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 5.0.3(@types/node@26.6.5)(@vitest/browser-playwright@5.0.3)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
+
+  packages/core:
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.5
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.72.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.87.0
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)
 
   packages/i18n:
     devDependencies:
@@ -335,6 +365,9 @@ importers:
       '@base-ui/react':
         specifier: 'catalog:'
         version: 1.9.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@openworkflowspec/core':
+        specifier: workspace:*
+        version: link:../core
       '@openworkflowspec/i18n':
         specifier: workspace:*
         version: link:../i18n
@@ -462,6 +495,9 @@ importers:
 
   packages/text-editor:
     dependencies:
+      '@openworkflowspec/core':
+        specifier: workspace:*
+        version: link:../core
       '@openworkflowspec/language-service':
         specifier: workspace:*
         version: link:../language-service
@@ -3271,10 +3307,6 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@5.4.2:
-    resolution: {integrity: sha512-m+aqu+LwO1O6sIopafj8HUVl5aawITwZQe/yHpMCKjaWBaA/d07B/QdMb3529REftiU+RMMHL3Vlsw3hON7vWg==}
-    hasBin: true
-
   js-yaml@5.4.3:
     resolution: {integrity: sha512-yzzNtgczwgoVHNigCyKTXcQJU4Y8t/ikU4UxXW0BvrLfHTGWZhsNcOT2s/a7vn81/4KqVnNmHjaUEPlvWnNwVw==}
     hasBin: true
@@ -4683,7 +4715,7 @@ snapshots:
     dependencies:
       ajv: 8.20.0
       ajv-formats: 3.0.1(ajv@8.20.0)
-      js-yaml: 5.4.2
+      js-yaml: 5.4.3
       semver: 7.8.5
 
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
@@ -6601,10 +6633,6 @@ snapshots:
   js-tokens@10.0.0: {}
 
   js-tokens@4.0.0: {}
-
-  js-yaml@5.4.2:
-    dependencies:
-      argparse: 2.0.1
 
   js-yaml@5.4.3:
     dependencies:
