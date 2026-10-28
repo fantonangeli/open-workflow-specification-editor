@@ -45,22 +45,32 @@
       }
     </style>
   </head>
-  <body>
-    <h1>Text Editor — Web Component Example</h1>
-    <openworkflowspec-text-editor></openworkflowspec-text-editor>
+<body>
+  <h1>Text Editor — Web Component Example</h1>
+  <openworkflowspec-text-editor></openworkflowspec-text-editor>
 
-    <script type="module">
-      import "./src/index.ts";
-      import LanguageServiceWorker from "@openworkflowspec/text-editor/worker?worker";
-      import { sampleWorkflow } from "./src/sample-workflow.ts";
+  <script type="module">
+    import "./src/index.ts";
+    import EditorWorker from "@openworkflowspec/text-editor/editor-worker?worker";
+    import LanguageServiceWorker from "@openworkflowspec/text-editor/worker?worker";
+    import { sampleWorkflow } from "./src/sample-workflow.ts";
 
-      const editor = document.querySelector("openworkflowspec-text-editor");
-      editor.createLanguageServiceWorker = () => new LanguageServiceWorker();
-      editor.content = sampleWorkflow;
+    self.MonacoEnvironment = {
+      getWorker(_workerId, label) {
+        if (label === "editorWorkerService") {
+          return new EditorWorker();
+        }
+        throw new Error(`Unexpected Monaco worker: ${label}`);
+      },
+    };
 
-      editor.addEventListener("change", (e) => {
-        console.log("Workflow content changed:", e.detail.content);
-      });
-    </script>
-  </body>
+    const editor = document.querySelector("openworkflowspec-text-editor");
+    editor.createLanguageServiceWorker = () => new LanguageServiceWorker();
+    editor.content = sampleWorkflow;
+
+    editor.addEventListener("change", (e) => {
+      console.log("Workflow content changed:", e.detail.content);
+    });
+  </script>
+</body>
 </html>
