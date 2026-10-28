@@ -116,6 +116,7 @@ export class TextEditorElement extends HTMLElement {
 
   private handleContentChange = (newContent: string): void => {
     this._content = newContent;
+    this.render();
     this.dispatchEvent(
       new CustomEvent("change", {
         detail: { content: newContent },
