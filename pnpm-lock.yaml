@@ -282,6 +282,82 @@ importers:
         specifier: 'catalog:'
         version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)
 
+  packages/dual-editor:
+    dependencies:
+      '@openworkflowspec/core':
+        specifier: workspace:*
+        version: link:../core
+      '@openworkflowspec/diagram-editor':
+        specifier: workspace:*
+        version: link:../open-workflow-diagram-editor
+      '@openworkflowspec/text-editor':
+        specifier: workspace:*
+        version: link:../text-editor
+    devDependencies:
+      '@chromatic-com/storybook':
+        specifier: 'catalog:'
+        version: 5.5.1(storybook@10.6.2(@types/react@19.3.0)(prettier@2.8.8)(react@19.3.1))
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.64.1
+      '@storybook/addon-a11y':
+        specifier: 'catalog:'
+        version: 10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@2.8.8)(react@19.3.1))
+      '@storybook/addon-docs':
+        specifier: 'catalog:'
+        version: 10.6.2(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(storybook@10.6.2(@types/react@19.3.0)(prettier@2.8.8)(react@19.3.1))
+      '@storybook/addon-vitest':
+        specifier: 'catalog:'
+        version: 10.6.2(@vitest/browser-playwright@5.0.5)(@vitest/browser@5.0.5)(@vitest/runner@4.1.11)(react@19.3.1)(storybook@10.6.2(@types/react@19.3.0)(prettier@2.8.8)(react@19.3.1))(vitest@5.0.5)
+      '@storybook/react-vite':
+        specifier: 'catalog:'
+        version: 10.6.2(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(storybook@10.6.2(@types/react@19.3.0)(prettier@2.8.8)(react@19.3.1))(typescript@7.0.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 7.0.1(@testing-library/dom@10.4.2)(vitest@5.0.5)
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.5
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      jsdom:
+        specifier: 'catalog:'
+        version: 30.1.3
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.73.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.88.0
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      storybook:
+        specifier: 'catalog:'
+        version: 10.6.2(@types/react@19.3.0)(prettier@2.8.8)(react@19.3.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.5(@types/node@26.6.5)(@vitest/browser-playwright@5.0.5)(@vitest/coverage-v8@5.0.5)(@vitest/ui@5.0.5)(jsdom@30.1.3)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
+
   packages/i18n:
     devDependencies:
       '@testing-library/jest-dom':
