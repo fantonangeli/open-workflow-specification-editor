@@ -96,6 +96,7 @@ export class TextEditorElement extends HTMLElement {
     }
     handleContentChange = (newContent) => {
         this._content = newContent;
+        this.render();
         this.dispatchEvent(new CustomEvent("change", {
             detail: { content: newContent },
             bubbles: true,

@@ -13,8 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import "@openworkflowspec/text-editor/styles.css";
-import { TextEditorElement } from "./text-editor-element";
-if (!customElements.get("openworkflowspec-text-editor")) {
-    customElements.define("openworkflowspec-text-editor", TextEditorElement);
+import "@openworkflowspec/dual-editor/styles.css";
+import { DualEditorElement } from "./dual-editor-element";
+// Vite transforms this module import into a Worker constructor.
+// oxlint-disable-next-line import/default
+import EditorWorker from "@openworkflowspec/text-editor/editor-worker?worker";
+Object.assign(self, {
+    MonacoEnvironment: {
+        getWorker(_workerId, label) {
+            if (label === "editorWorkerService") {
+                return new EditorWorker();
+            }
+            throw new Error(`Unexpected Monaco worker: ${label}`);
+        },
+    },
+});
+if (!customElements.get("openworkflowspec-dual-editor")) {
+    customElements.define("openworkflowspec-dual-editor", DualEditorElement);
 }
